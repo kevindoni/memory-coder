@@ -1,0 +1,42 @@
+# Secrets
+.env
+.env.local
+*.pem
+*.key
+
+# Database (contains all memories — may be proprietary)
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Dependencies
+node_modules/
+
+# Build output
+memory-coder/dist/
+memory-coder/dashboard/dist/
+
+# Runtime / generated artifacts (maintenance scripts)
+memory-coder/scripts/consolidate-backup-*.json
+memory-coder/scripts/consolidate-report-*.json
+memory-coder/scripts/.scheduler-state.json
+memory-coder/scripts/eval-trend.jsonl
+memory-coder/scripts/golden-qa.json
+
+# Test / session artifacts
+.playwright-mcp/
+captures/
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,48 @@
+{
+  "name": "memory-coder",
+  "version": "1.0.0",
+  "description": "MCP Server with persistent memory - AI that remembers your coding journey",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "start:cli": "node dist/cli.js",
+    "dev": "tsx src/index.ts",
+    "dev:cli": "tsx src/cli.ts",
+    "dev:bridge": "set MEMORY_CODER_MODE=bridge&& set MEMORY_CODER_PORT=3333&& tsx src/index.ts",
+    "start:bridge": "set MEMORY_CODER_MODE=bridge&& set MEMORY_CODER_PORT=3333&& node dist/index.js",
+    "dashboard:install": "cd dashboard && npm install",
+    "dashboard:dev": "cd dashboard && npm run dev",
+    "dashboard:build": "cd dashboard && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "memory",
+    "ai",
+    "coding"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@xenova/transformers": "^2.17.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.5.2",
+    "morgan": "^1.11.0",
+    "sql.js": "^1.11.0",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^20.0.0",
+    "@types/sql.js": "^1.4.11",
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

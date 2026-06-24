@@ -1,0 +1,205 @@
+[
+  {
+    "query": "bagaimana menampilkan data arsip baris per baris di tabel UI",
+    "expect_id": "46a2d9c1-cf5d-4cb1-a0ac-af1f654d71c4",
+    "project_name": null,
+    "type": "pattern",
+    "note": "paraphrase"
+  },
+  {
+    "query": "sqlite gabung string unik pakai pemisah di dalam query grup",
+    "expect_id": "615c49c3-3d9d-472d-83b9-870f7984f11b",
+    "project_name": null,
+    "type": "bug",
+    "note": "paraphrase"
+  },
+  {
+    "query": "struktur tabel database untuk modul arsip ARKAS",
+    "expect_id": "12d6a886-73bd-4b51-9357-e3d6f93bb0d4",
+    "project_name": null,
+    "type": "learning",
+    "note": "paraphrase"
+  },
+  {
+    "query": "fitur rekomendasi pola antar project sudah jalan",
+    "expect_id": "a3a264b6-1818-4ccf-843b-268104d85091",
+    "project_name": null,
+    "type": "learning",
+    "note": "paraphrase"
+  },
+  {
+    "query": "sistem belajar dari penilaian useful dan not useful terbukti mengubah ranking",
+    "expect_id": "44a1eef8-7050-487b-9bcd-28cda1488dc7",
+    "project_name": null,
+    "type": "learning",
+    "note": "paraphrase"
+  },
+  {
+    "query": "kenapa klik kartu tidak expand padahal onClick ada di wrapper luar",
+    "expect_id": "7345cce1-11e5-4d8e-83b8-422586396e5b",
+    "project_name": null,
+    "type": "bug",
+    "note": "paraphrase"
+  },
+  {
+    "query": "ringkasan apa saja yang dirilis di versi 1.12 SmartSPJ",
+    "expect_id": "f4ab6c3f-647e-40a5-8ca8-adc36b1c1a4e",
+    "project_name": null,
+    "type": "general",
+    "note": "paraphrase"
+  },
+  {
+    "query": "grafik tren tahunan tidak memunculkan kode penerimaan",
+    "expect_id": "472d8129-6e23-4eda-9fcd-93e42d21cd92",
+    "project_name": null,
+    "type": "bug",
+    "note": "paraphrase"
+  },
+  {
+    "query": "jumlah bulan di laporan arsip bku kehitung dobel",
+    "expect_id": "a3719776-72e5-44bd-8cab-5657f44f7ead",
+    "project_name": null,
+    "type": "bug",
+    "note": "paraphrase"
+  },
+  {
+    "query": "cara menjadwalkan backup database otomatis",
+    "expect_id": "fd956c67-d959-4ac2-8a10-f797a4ac9dc3",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "pengamanan kode sumber pakai enkripsi simetris aes",
+    "expect_id": "b5f874d5-7bd3-4b22-adf7-e8a00ed5f9de",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "mode uji coba berbayar dan penguatan keamanan aplikasi",
+    "expect_id": "11275bfc-d4c8-46fa-820d-592934440c0a",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "perbaikan bug import rkas supaya autosave stabil",
+    "expect_id": "cbacdbaf-5ace-4ba7-8661-dda9ac7d3f41",
+    "project_name": null,
+    "type": "bug",
+    "note": "paraphrase"
+  },
+  {
+    "query": "hasil recall kini punya skor kepercayaan dan peluruhan waktu",
+    "expect_id": "7edd2304-1467-4188-9abe-7cceffc245af",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "eval gagal karena mengirim null ke field optional zod",
+    "expect_id": "c37f5871-4b05-4a2a-8e26-f6d7eb4f9982",
+    "project_name": null,
+    "type": "bug",
+    "note": "paraphrase"
+  },
+  {
+    "query": "apa yang harus dilakukan setelah mengubah handler backend",
+    "expect_id": "9611c796-44f9-4c65-a941-f9c19b573b6a",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "fitur tren multi tahun dihapus kenapa",
+    "expect_id": "382f55a3-1091-4f4e-b264-659d48159578",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "tata letak halaman pencadangan dan pemulihan",
+    "expect_id": "3f2f21f6-14d8-49ea-9b82-a00caf463a05",
+    "project_name": null,
+    "type": "pattern",
+    "note": "paraphrase"
+  },
+  {
+    "query": "cara kirim json kompleks lewat curl tanpa masalah kutipan",
+    "expect_id": "a9cda3f3-c639-4e39-9003-4858af37ed33",
+    "project_name": null,
+    "type": "pattern",
+    "note": "paraphrase"
+  },
+  {
+    "query": "zod optional tetap menerima nilai null",
+    "expect_id": "4f35968b-5d7a-4c8c-897d-3276bec17490",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "menambahkan kartu baru ke grid yang sudah ada",
+    "expect_id": "00c6f5d7-10ca-47fd-8ab2-0493b524389a",
+    "project_name": null,
+    "type": "pattern",
+    "note": "paraphrase"
+  },
+  {
+    "query": "metrik dasar alat ukur kualitas recall",
+    "expect_id": "84a9292b-955d-475b-bc58-9ded4489299e",
+    "project_name": null,
+    "type": "general",
+    "note": "paraphrase"
+  },
+  {
+    "query": "perilaku script pembersih memori duplikat",
+    "expect_id": "a73a75b7-149f-4713-a1c2-57e6c6ce4325",
+    "project_name": null,
+    "type": "general",
+    "note": "paraphrase"
+  },
+  {
+    "query": "penilaian berguna memperbaiki urutan hasil pencarian",
+    "expect_id": "6aa2caf7-755a-42e3-ac29-c5b27ba154d2",
+    "project_name": null,
+    "type": "learning",
+    "note": "paraphrase"
+  },
+  {
+    "query": "menyimpan file dengan aman memakai dialog simpan",
+    "expect_id": "3aa34742-0942-40e5-a91f-ad94a8c0b529",
+    "project_name": null,
+    "type": "pattern",
+    "note": "paraphrase"
+  },
+  {
+    "query": "membersihkan efek async pakai flag batal di react",
+    "expect_id": "2670a16b-2c94-4914-bada-4a2efa27e7a9",
+    "project_name": null,
+    "type": "pattern",
+    "note": "paraphrase"
+  },
+  {
+    "query": "hook main process electron untuk mengaktifkan fitur",
+    "expect_id": "4c797c3a-791e-4668-8fde-7790d84dc37e",
+    "project_name": null,
+    "type": "learning",
+    "note": "paraphrase"
+  },
+  {
+    "query": "fitur belajar apa saja yang baru ditambahkan ke bridge",
+    "expect_id": "f51a3f64-af4e-4ec1-9fed-71e1f897ba90",
+    "project_name": null,
+    "type": "decision",
+    "note": "paraphrase"
+  },
+  {
+    "query": "handler ipc tanpa parameter memperkecil serangan injeksi",
+    "expect_id": "1f034609-b858-479a-81e2-cfe57bef45f6",
+    "project_name": null,
+    "type": "pattern",
+    "note": "paraphrase"
+  }
+]

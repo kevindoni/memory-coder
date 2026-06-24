@@ -1,0 +1,53 @@
+{
+  "memory_coder_bridge": {
+    "base_url": "http://127.0.0.1:3333",
+    "recommended_prefix": "Use memory-coder bridge for persistent coding memory.",
+    "tools": {
+      "create_project": {
+        "method": "POST",
+        "path": "/v1/create-project",
+        "body": {
+          "name": "project name",
+          "path": "project root path",
+          "tech_stack": ["typescript", "express"],
+          "description": "short description"
+        }
+      },
+      "get_project_context": {
+        "method": "POST",
+        "path": "/v1/get-project-context",
+        "body": {
+          "project_name": "project name"
+        }
+      },
+      "remember": {
+        "method": "POST",
+        "path": "/v1/remember",
+        "body": {
+          "content": "memory content",
+          "type": "decision",
+          "project_name": "project name"
+        }
+      },
+      "recall": {
+        "method": "POST",
+        "path": "/v1/recall",
+        "body": {
+          "query": "natural language search",
+          "project_name": "project name",
+          "limit": 5
+        }
+      },
+      "log_bug": {
+        "method": "POST",
+        "path": "/v1/log-bug",
+        "body": {
+          "error": "error text",
+          "context": "where it happened",
+          "solution": "how it was fixed",
+          "project_name": "project name"
+        }
+      }
+    }
+  }
+}
