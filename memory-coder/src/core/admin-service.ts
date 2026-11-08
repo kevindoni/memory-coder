@@ -331,12 +331,14 @@ export async function indexProjectService(id: string) {
 }
 
 /**
- * Build a portable Agent Skill (SKILL.md) from a project's highest-value
- * memories. Rides the agent-skills convention (frontmatter + distilled
- * knowledge) so any agent runtime (OpenCode, Claude, Cursor) can load it;
- * includes live-query instructions pointing back at the bridge.
+ * Build a portable Agent Skill (SKILL.md) or AGENTS.md drop-in from a
+ * project's highest-value memories. Rides the agent-skills convention
+ * (skills dirs, .agents/, project-root AGENTS.md) so any agent runtime
+ * (OpenCode, Claude, Cursor) can load it; includes live-query instructions
+ * pointing back at the bridge plus a session protocol that closes the
+ * claude-mem loop prompt-side (recall at start, remember at end).
  */
-export function exportSkillService(id: string) {
+export function exportSkillService(id: string, format: "skill" | "agents" = "skill") {
   const project = getProject(id);
   if (!project) return { success: false, error: "Project not found" };
 
@@ -357,16 +359,25 @@ export function exportSkillService(id: string) {
   const learnings = pick("learning", 6, 260);
   const stack = (project.tech_stack || []).join(", ") || "-";
   const port = Number(process.env.MEMORY_CODER_PORT || 3333);
+  const slug = project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-  const content = `---
-name: ${project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-memory
-description: Kurasi pengetahuan proyek ${project.name} (${stack}) — keputusan, bug terpecahkan, pola, dan pembelajaran dari ${mems.length} memori. Query live tersedia via REST bridge.
----
+  const frontmatter = format === "skill"
+    ? `---\nname: ${slug}-memory\ndescription: Kurasi pengetahuan proyek ${project.name} (${stack}) — keputusan, bug terpecahkan, pola, dan pembelajaran dari ${mems.length} memori. Query live tersedia via REST bridge.\n---\n\n`
+    : `<!-- AGENTS.md drop-in untuk proyek ${project.name} — dihasilkan memory-coder ${new Date().toISOString().slice(0, 10)} -->\n\n`;
 
-# ${project.name} — Project Memory Skill
+  const content = `${frontmatter}# ${project.name} — Project Memory
 
 ${project.description ? `> ${project.description}\n` : ""}
 Distilasi otomatis dari ${mems.length} memori (disusun dari feedback + akses + importance).
+
+## Protokol sesi (wajib)
+1. **Awal tugas**: baca seksi di bawah yang relevan; untuk kebutuhan spesifik, query live (contoh di bawah) daripada mengandalkan snapshot ini.
+2. **Sebelum mengubah kode**: cek bagian "Keputusan arsitektur" — jangan melanggar keputusan yang tercatat tanpa alasan kuat dan catat keputusan penggantinya.
+3. **Akhir tugas / saat menemukan hal berharga**: simpan ke bridge agar sesi berikutnya mewarisi:
+   - bug terpecahkan → \`log_bug\` (MCP) atau POST /v1/log-bug
+   - keputusan desain → \`remember\` type=decision
+   - pola/pembelajaran → \`remember\` type=pattern|learning
+   Lewati jika tidak ada yang baru — jangan menulis memori kosong.
 
 ## Keputusan arsitektur (${decisions.length})
 ${decisions.length ? decisions.join("\n") : "- (belum ada)"}
@@ -390,13 +401,14 @@ curl -s -X POST http://127.0.0.1:${port}/v1/recall \\
   -d '{"query":"<topik>","project_name":"${project.name}","limit":5}'
 \`\`\`
 
-Atau via tool MCP \`memory-coder\` (recall) bila bridge terdaftar.
+Atau via tool MCP \`memory-coder\` (recall / remember / log_bug) bila bridge terdaftar.
 Generated ${new Date().toISOString().slice(0, 10)} oleh memory-coder.
 `;
 
   return {
     success: true,
-    filename: `${project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-memory.SKILL.md`,
+    format,
+    filename: format === "skill" ? `${slug}-memory.SKILL.md` : `AGENTS.md`,
     content,
     stats: { total: mems.length, decisions: decisions.length, bugs: bugs.length, patterns: patterns.length, learnings: learnings.length }
   };

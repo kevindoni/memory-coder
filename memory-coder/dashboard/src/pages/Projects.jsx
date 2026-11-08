@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FolderKanban, MapPin, Hash, ChevronRight, Loader2, GitBranch, CheckCircle2, AlertCircle, Info, Pencil, BookOpen, Download, Copy, X } from "lucide-react";
+import { FolderKanban, MapPin, Hash, ChevronRight, Loader2, GitBranch, CheckCircle2, AlertCircle, Info, Pencil, BookOpen, Download, Copy, X, RefreshCw } from "lucide-react";
 import { api } from "../api.js";
 import DeleteButton from "../components/DeleteButton.jsx";
 import ProjectDetailModal from "../components/ProjectDetailModal.jsx";
@@ -12,6 +12,8 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
   const [busy, setBusy] = useState({});
   const [result, setResult] = useState({});
   const [skillModal, setSkillModal] = useState(null);
+  const [skillFormat, setSkillFormat] = useState("skill");
+  const [skillProjectId, setSkillProjectId] = useState(null);
   const [detail, setDetail] = useState(null);
   const [edit, setEdit] = useState(null);
 
@@ -50,8 +52,9 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
 
   const handleSkill = async (id) => {
     setBusy((s) => ({ ...s, [id]: "skill" }));
+    setSkillProjectId(id);
     try {
-      const r = await api.exportSkill(id);
+      const r = await api.exportSkill(id, skillFormat);
       setSkillModal(r);
     } catch (e) {
       alert("Gagal export skill: " + e.message);
@@ -190,8 +193,35 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/[0.06] px-5 py-4">
               <div>
                 <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Export Agent Skill</h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-500">
-                  {skillModal.filename} · {skillModal.stats.total} memori → {skillModal.stats.decisions + skillModal.stats.bugs + skillModal.stats.patterns + skillModal.stats.learnings} entri terkurasi
+                <div className="mt-1.5 flex items-center gap-1.5">
+                  {[
+                    { v: "skill", label: "SKILL.md", hint: "skills dir (OpenCode/Claude/Cursor)" },
+                    { v: "agents", label: "AGENTS.md", hint: "root proyek / .agents/" }
+                  ].map((f) => (
+                    <button
+                      key={f.v}
+                      onClick={() => setSkillFormat(f.v)}
+                      title={f.hint}
+                      className={cn(
+                        "rounded-md px-2 py-0.5 font-mono text-[10px] transition-colors",
+                        skillFormat === f.v
+                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500/30"
+                          : "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10"
+                      )}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => skillProjectId && handleSkill(skillProjectId)}
+                    className="btn btn-ghost !py-0.5 !px-1.5 text-[10px] text-slate-500 dark:text-slate-400"
+                    title="Muat ulang dengan format terpilih"
+                  >
+                    <RefreshCw className="h-3 w-3" />
+                  </button>
+                </div>
+                <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-500">
+                  {skillModal.filename} · {skillModal.stats.total} memori → {skillModal.stats.decisions + skillModal.stats.bugs + skillModal.stats.patterns + skillModal.stats.learnings} entri terkurasi + protokol sesi
                 </p>
               </div>
               <div className="flex items-center gap-2">
