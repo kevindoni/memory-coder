@@ -6,6 +6,7 @@ import { loadEnvFile } from "./utils/env.js";
 import { startBridge } from "./bridge/http.js";
 import { startAutoIndexer } from "./core/git-indexer.js";
 import { startFileWatcher } from "./core/file-watcher.js";
+import { startSmartManager } from "./core/smart-manager.js";
 import { tools, toolHandlers } from "./tools/index.js";
 
 // Ensure debounced DB writes are flushed on shutdown
@@ -60,7 +61,7 @@ class MemoryCoderServer {
 
   async run() {
     try {
-      await initDatabase("./data/memory.db");
+      await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
       console.error("🚀 Memory Coder MCP Server running...");
@@ -73,7 +74,7 @@ class MemoryCoderServer {
 
 async function main() {
   loadEnvFile();
-  await initDatabase("./data/memory.db");
+  await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
   registerShutdownHooks();
 
   if (process.env.MEMORY_CODER_MODE === "bridge") {
@@ -81,6 +82,7 @@ async function main() {
     await startBridge(port);
     startAutoIndexer();
     startFileWatcher();
+    startSmartManager(Number(process.env.MC_SMART_INTERVAL_MIN || 60));
     return;
   }
 

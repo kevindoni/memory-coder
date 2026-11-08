@@ -46,7 +46,7 @@ const SAVE_DEBOUNCE_MS = 500;
 let dirtyCount = 0;
 const FLUSH_THRESHOLD = 25; // force flush after this many unsaved writes
 
-export async function initDatabase(dbPath: string = "./data/memory.db"): Promise<Database> {
+export async function initDatabase(dbPath: string = process.env.MEMORY_DB_PATH || "./data/memory.db"): Promise<Database> {
   if (db) return db;
 
   activeDbPath = dbPath;
@@ -409,6 +409,29 @@ export function getMemoriesByProject(projectId: string, limit: number = 10): Mem
   return collectMemories(stmt);
 }
 
+/**
+ * Lightweight id-only lookup for search scope pools. Avoids SELECT * (which
+ * pulls embedding BLOBs) when the caller only needs a Set<string> of ids.
+ */
+export function getMemoryIds(filters?: { projectId?: string; type?: string }): string[] {
+  const database = getDb();
+  const conds: string[] = [];
+  const params: string[] = [];
+  if (filters?.projectId) { conds.push("project_id = ?"); params.push(filters.projectId); }
+  if (filters?.type) { conds.push("type = ?"); params.push(filters.type); }
+  let sql = `SELECT id FROM memories`;
+  if (conds.length) sql += ` WHERE ${conds.join(" AND ")}`;
+  const stmt = database.prepare(sql);
+  stmt.bind(params);
+  const ids: string[] = [];
+  while (stmt.step()) {
+    const row = stmt.getAsObject() as any;
+    ids.push(row.id);
+  }
+  stmt.free();
+  return ids;
+}
+
 export function getAllMemories(limit: number = 100): Memory[] {
   const database = getDb();
   const stmt = database.prepare(`SELECT * FROM memories ORDER BY updated_at DESC LIMIT ?`);
@@ -598,6 +621,26 @@ export function deleteMemory(id: string): boolean {
   getVectorStore().remove(id);
   getBM25Index().remove(id);
   scheduleSave();
+  return true;
+}
+
+/**
+ * Re-scope a memory to a different project. Also refreshes the in-memory BM25
+ * index so project-filtered search/hydrate stays consistent.
+ */
+export function updateMemoryProject(id: string, projectId: string | null): boolean {
+  const exists = scalar("SELECT COUNT(*) AS c FROM memories WHERE id = ?", [id]) > 0;
+  if (!exists) return false;
+  const database = getDb();
+  database.run(`UPDATE memories SET project_id = ?, updated_at = ? WHERE id = ?`, [
+    projectId,
+    new Date().toISOString(),
+    id
+  ]);
+  scheduleSave();
+  // BM25 lexicon is path-independent; just ensure the row is re-indexed on next hydrate.
+  const m = getMemoryById(id);
+  if (m) getBM25Index().add(m.id, `${m.title} ${m.content}`);
   return true;
 }
 

@@ -90,7 +90,7 @@ class VectorStore {
    * Search for the k nearest neighbors of `query`.
    * Returns ids sorted by similarity (descending).
    */
-  search(query: Float32Array, k: number, opts?: { projectIds?: Set<string> | null; pool?: Map<string, string> }): Array<{ id: string; similarity: number }> {
+  search(query: Float32Array, k: number, opts?: { projectIds?: Set<string> | null; pool?: Set<string> }): Array<{ id: string; similarity: number }> {
     const n = this.vectors.size;
     if (n === 0) return [];
 
@@ -130,7 +130,7 @@ class VectorStore {
       .slice(0, k);
   }
 
-  private bruteForce(query: Float32Array, k: number, pool?: Map<string, string>): Array<{ id: string; similarity: number }> {
+  private bruteForce(query: Float32Array, k: number, pool?: Set<string>): Array<{ id: string; similarity: number }> {
     const results: Array<{ id: string; similarity: number }> = [];
     for (const [id, vec] of this.vectors) {
       if (pool && !pool.has(id)) continue;

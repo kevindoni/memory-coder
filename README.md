@@ -106,6 +106,9 @@ Base `http://127.0.0.1:3333`. Writes/searches are POST JSON.
 | `POST` | `/v1/admin/ask` | RAG Q&A (`{question,project_name?}`) |
 | `GET/PUT/DELETE` | `/v1/admin/projects[/:id]` | list / edit / delete projects |
 | `GET` | `/v1/admin/conflicts` | dup + decision-conflict pairs |
+| `GET` | `/v1/admin/smart-status` | Smart Manager config + counters |
+| `POST` | `/v1/admin/smart-expire` | `{apply?:boolean}` — expire stale memories (dry-run default) |
+| `POST` | `/v1/admin/smart-scope` | `{apply?:boolean}` — map unscoped memories to projects |
 | `POST` | `/v1/admin/reembed` | re-compute all embeddings (after model swap) |
 | `GET` | `/v1/admin/stats` · `/embed-status` | counts / active embedding model |
 
@@ -126,12 +129,14 @@ Eval trend is appended to `eval-trend.jsonl` (gitignored) — track recall quali
 - **Backend:** TypeScript, Express 5, sql.js (SQLite WASM), zod
 - **Embeddings:** `@xenova/transformers` — `paraphrase-multilingual-MiniLM-L12-v2` (384-dim). Configurable via `EMBEDDING_MODEL` (dimension-agnostic — mpnet 768-dim works when RAM allows).
 - **Retrieval:** hybrid (bucketed ANN + BM25) + multi-signal reranker (similarity, overlap, utility, recency, importance)
-- **LLM (RAG/capture):** OpenRouter (`openai/gpt-oss-120b:free` by default)
+- **LLM (RAG/capture):** OpenRouter (`openai/gpt-4o-mini` by default) with optional backup provider via `LLM_BACKUP_*` env vars
 - **Dashboard:** React 18, Vite 5, Tailwind 3, lucide-react
 - **Process:** PM2
 
 ## Notes
 
+- **Smart Manager** runs automatically in bridge mode (hourly tick): project auto-detect from `cwd`, real-time dedup, decision conflict auto-resolve, importance tuning, stale expiry (dry-run), unscoped re-mapping. Tune via `MC_*` env vars (see `.env.example`), monitor/trigger from the dashboard **Smart Manager** menu.
+- **`remember` / `log_bug` accept `cwd`** — pass the agent's working directory to auto-detect (or auto-register) the project. Temp/system dirs are never auto-registered.
 - **Memories are local & private** — `data/memory.db` is gitignored and never committed.
 - **Scheduler runs on local time** (logs are UTC; `getHours()` is local, UTC+7).
 - **PM2 env caveat:** changing `EMBEDDING_MODEL` in `ecosystem.config.cjs` requires `pm2 delete <app> && pm2 start ecosystem.config.cjs --only <app>` (`restart --update-env` does **not** re-read ecosystem env). After a model change, run `POST /v1/admin/reembed`.

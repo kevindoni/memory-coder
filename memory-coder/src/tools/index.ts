@@ -43,6 +43,7 @@ export const tools = [
         type: { type: "string", enum: ["bug", "decision", "pattern", "learning", "general"], description: "Type of memory" },
         project_id: { type: "string", description: "Project ID" },
         project_name: { type: "string", description: "Project name" },
+        cwd: { type: "string", description: "Working directory of the current project — enables auto-detection/auto-registration of the project" },
         title: { type: "string", description: "Short title" },
         tags: { type: "array", items: { type: "string" }, description: "Tags" },
         metadata: { type: "object", description: "Additional metadata" }
@@ -75,7 +76,8 @@ export const tools = [
         context: { type: "string", description: "Where it happened" },
         solution: { type: "string", description: "How it was fixed" },
         project_id: { type: "string", description: "Project ID" },
-        project_name: { type: "string", description: "Project name" }
+        project_name: { type: "string", description: "Project name" },
+        cwd: { type: "string", description: "Working directory of the current project — enables auto-detection of the project" }
       },
       required: ["error", "context", "solution"]
     }

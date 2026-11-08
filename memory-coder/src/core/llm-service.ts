@@ -9,12 +9,51 @@ export interface ChatMessage {
   content: string;
 }
 
+interface Provider {
+  name: string;
+  url: string;
+  apiKey: string;
+  model: string;
+}
+
+function getProviders(): Provider[] {
+  const list: Provider[] = [];
+
+  // Primary: OpenRouter
+  const orKey = process.env.OPENROUTER_API_KEY;
+  if (orKey) {
+    list.push({
+      name: "openrouter",
+      url: OPENROUTER_URL,
+      apiKey: orKey,
+      model: process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini"
+    });
+  }
+
+  // Backup: configurable LLM provider (e.g. 9router)
+  const bKey = process.env.LLM_BACKUP_API_KEY;
+  const bUrl = process.env.LLM_BACKUP_URL;
+  if (bKey && bUrl) {
+    list.push({
+      name: process.env.LLM_BACKUP_NAME || "backup",
+      url: bUrl.endsWith("/chat/completions")
+        ? bUrl
+        : bUrl.replace(/\/$/, "") + "/chat/completions",
+      apiKey: bKey,
+      model: process.env.LLM_BACKUP_MODEL || "9router"
+    });
+  }
+
+  return list;
+}
+
 export function llmConfigured(): boolean {
-  return Boolean(process.env.OPENROUTER_API_KEY);
+  return getProviders().length > 0;
 }
 
 export function llmModel(): string {
-  return process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
+  const providers = getProviders();
+  return providers[0]?.model || "openai/gpt-4o-mini";
 }
 
 const MAX_RETRIES = Number(process.env.LLM_MAX_RETRIES || 2);
@@ -22,80 +61,99 @@ const TIMEOUT_MS = Number(process.env.LLM_TIMEOUT_MS || 60_000);
 
 /**
  * Chat completion with exponential-backoff retry and a hard timeout.
- * Retries on network errors and 5xx / 429 responses.
+ * Tries each configured provider in order; on final failure of one,
+ * falls through to the next (backup). Retries on network errors and 5xx / 429.
  */
 export async function chatCompletion(
   messages: ChatMessage[],
   opts?: { temperature?: number; maxTokens?: number }
 ): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY belum dikonfigurasi. Set di file .env (lihat integrations/).");
+  const providers = getProviders();
+  if (providers.length === 0) {
+    throw new Error("Tidak ada LLM provider terkonfigurasi. Set OPENROUTER_API_KEY atau LLM_BACKUP_* di file .env.");
   }
-
-  const body = JSON.stringify({
-    model: llmModel(),
-    messages,
-    temperature: opts?.temperature ?? 0.3,
-    max_tokens: opts?.maxTokens ?? 1024
-  });
 
   let lastError: Error | null = null;
 
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  for (const provider of providers) {
+    const body = JSON.stringify({
+      model: provider.model,
+      messages,
+      temperature: opts?.temperature ?? 0.3,
+      max_tokens: opts?.maxTokens ?? 1024,
+      // 9router (dan beberapa gateway lain) merespons SSE secara default;
+      // paksa JSON non-stream agar bisa di-parse sebagai objek chat.completion.
+      stream: false
+    });
 
-    try {
-      const res = await fetch(OPENROUTER_URL, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "X-Title": "memory-coder"
-        },
-        body,
-        signal: controller.signal
-      });
+    let failed = false;
 
-      clearTimeout(timer);
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-      // Retry on rate-limit and server errors
-      if (res.status === 429 || res.status >= 500) {
-        const text = await res.text().catch(() => "");
-        lastError = new Error(`OpenRouter ${res.status}: ${text.slice(0, 300)}`);
-        if (attempt < MAX_RETRIES) {
+      try {
+        const res = await fetch(provider.url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${provider.apiKey}`,
+            "Content-Type": "application/json",
+            "X-Title": "memory-coder"
+          },
+          body,
+          signal: controller.signal
+        });
+
+        clearTimeout(timer);
+
+        // Retry on rate-limit and server errors
+        if (res.status === 429 || res.status >= 500) {
+          const text = await res.text().catch(() => "");
+          lastError = new Error(`${provider.name} ${res.status}: ${text.slice(0, 300)}`);
+          if (attempt < MAX_RETRIES) {
+            await sleep(backoffMs(attempt));
+            continue;
+          }
+          failed = true; // exhausted retries on this provider -> try next
+          break;
+        }
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          // Non-retriable error -> fall through to backup provider
+          lastError = new Error(`${provider.name} ${res.status}: ${text.slice(0, 400)}`);
+          failed = true;
+          break;
+        }
+
+        const data = (await res.json()) as any;
+        return data?.choices?.[0]?.message?.content ?? "";
+      } catch (e: any) {
+        clearTimeout(timer);
+        // AbortError = timeout
+        if (e?.name === "AbortError") {
+          lastError = new Error(`${provider.name}: LLM request timed out after ${TIMEOUT_MS}ms`);
+        } else {
+          lastError = e instanceof Error ? e : new Error(String(e));
+        }
+        // Only retry on transient errors (network/timeout), not on bad request
+        if (attempt < MAX_RETRIES && isTransient(lastError)) {
           await sleep(backoffMs(attempt));
           continue;
         }
-        throw lastError;
+        failed = true;
+        break;
       }
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(`OpenRouter ${res.status}: ${text.slice(0, 400)}`);
-      }
-
-      const data = (await res.json()) as any;
-      return data?.choices?.[0]?.message?.content ?? "";
-    } catch (e: any) {
-      clearTimeout(timer);
-      // AbortError = timeout
-      if (e?.name === "AbortError") {
-        lastError = new Error(`LLM request timed out after ${TIMEOUT_MS}ms`);
-      } else {
-        lastError = e instanceof Error ? e : new Error(String(e));
-      }
-      // Only retry on transient errors (network/timeout), not on bad request
-      if (attempt < MAX_RETRIES && isTransient(lastError)) {
-        await sleep(backoffMs(attempt));
-        continue;
-      }
-      throw lastError;
     }
+
+    if (!failed) {
+      // Should not reach here (success returns early), but be safe.
+      continue;
+    }
+    // Move on to next provider (backup)
   }
 
-  throw lastError ?? new Error("LLM request failed");
+  throw lastError ?? new Error("LLM request failed across all providers");
 }
 
 function isTransient(err: Error): boolean {

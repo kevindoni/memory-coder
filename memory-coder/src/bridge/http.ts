@@ -26,6 +26,9 @@ import {
   listProjectsService,
   reembedService,
   smartSummaryService,
+  smartStatusService,
+  smartExpireService,
+  smartScopeService,
   statsService,
   supersedeChainService,
   updateProjectService
@@ -100,6 +103,9 @@ export async function startBridge(port = 3333) {
   adminRouter.use(requireApiKey);
 
   adminRouter.get("/stats", (_req, res) => respond(res, statsService()));
+  adminRouter.get("/smart-status", (_req, res) => respond(res, Promise.resolve(smartStatusService())));
+  adminRouter.post("/smart-expire", writeLimiter, (req: Request, res) => respond(res, Promise.resolve(smartExpireService(req.body))));
+  adminRouter.post("/smart-scope", writeLimiter, (req: Request, res) => respond(res, Promise.resolve(smartScopeService(req.body))));
   adminRouter.get("/projects", (_req, res) => respond(res, listProjectsService()));
   adminRouter.get("/memories", (req: Request, res) => respond(res, listMemoriesService(req.query as Record<string, unknown>)));
   adminRouter.post("/memories", writeLimiter, (req: Request, res) => respond(res, addMemoryService(req.body)));

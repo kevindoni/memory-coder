@@ -1,0 +1,11 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "memory-coder": {
+      "type": "local",
+      "command": ["node", "D:\\laragon\\www\\MCPCODING\\memory-coder\\dist\\index.js"],
+      "cwd": "D:\\laragon\\www\\MCPCODING\\memory-coder",
+      "enabled": true
+    }
+  }
+}

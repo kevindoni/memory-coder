@@ -12,8 +12,9 @@ import Learning from "./pages/Learning.jsx";
 import Recall from "./pages/Recall.jsx";
 import Graph from "./pages/Graph.jsx";
 import Conflicts from "./pages/Conflicts.jsx";
+import SmartManager from "./pages/SmartManager.jsx";
 import Settings from "./pages/Settings.jsx";
-import { LayoutDashboard, FolderKanban, BrainCircuit, ScrollText, Plus, Sparkles, ClipboardList, GraduationCap, Search, Network, GitCompare, Settings as Cog } from "lucide-react";
+import { LayoutDashboard, FolderKanban, BrainCircuit, ScrollText, Plus, Sparkles, ClipboardList, GraduationCap, Search, Network, GitCompare, Cpu, Settings as Cog } from "lucide-react";
 
 const TITLES = {
   overview: { label: "Overview", icon: LayoutDashboard },
@@ -23,6 +24,7 @@ const TITLES = {
   graph: { label: "Graph", icon: Network },
   learning: { label: "Learning", icon: GraduationCap },
   conflicts: { label: "Conflicts", icon: GitCompare },
+  smart: { label: "Smart Manager", icon: Cpu },
   ask: { label: "Ask AI", icon: Sparkles },
   capture: { label: "Capture Chat", icon: ClipboardList },
   logs: { label: "Activity Log", icon: ScrollText },
@@ -113,6 +115,7 @@ export default function App() {
               {view === "recall" && <Recall projects={projects} />}
               {view === "graph" && <Graph projects={projects} />}
               {view === "conflicts" && <Conflicts />}
+              {view === "smart" && <SmartManager />}
               {view === "settings" && <Settings stats={stats} />}
               {view === "capture" && <Capture projects={projects} onNeedsRefresh={refresh} />}
               {view === "logs" && <Logs projects={projects} signal={refreshSignal} />}

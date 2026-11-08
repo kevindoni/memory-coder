@@ -1,8 +1,19 @@
 const BASE = "/v1";
 
+export function getApiKey() {
+  return localStorage.getItem("memory_coder_api_key") || "";
+}
+
+export function setApiKey(key) {
+  localStorage.setItem("memory_coder_api_key", key);
+}
+
 async function request(path, options = {}) {
+  const key = getApiKey();
+  const headers = { "Content-Type": "application/json" };
+  if (key) headers["X-API-Key"] = key;
   const res = await fetch(`${BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
+    headers,
     ...options
   });
   if (!res.ok) {
@@ -51,5 +62,8 @@ export const api = {
   ask: (body) => request("/admin/ask", { method: "POST", body: JSON.stringify(body) }),
   capture: (body) => request("/admin/capture", { method: "POST", body: JSON.stringify(body) }),
   captureFile: (body) => request("/admin/capture-file", { method: "POST", body: JSON.stringify(body) }),
-  fileWatcher: () => request("/admin/file-watcher")
+  fileWatcher: () => request("/admin/file-watcher"),
+  smartStatus: () => request("/admin/smart-status"),
+  smartExpire: (apply) => request(`/admin/smart-expire`, { method: "POST", body: JSON.stringify(apply ? { apply: true } : {}) }),
+  smartScope: (apply) => request(`/admin/smart-scope`, { method: "POST", body: JSON.stringify(apply ? { apply: true } : {}) })
 };

@@ -40,3 +40,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# EnvKit — per-project PHP error log (do not commit)
+php_error.log

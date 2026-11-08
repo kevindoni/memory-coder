@@ -1,12 +1,12 @@
 import { z } from "zod";
 import {
   createProject,
-  getAllMemories,
   getMemoriesByProject,
   getProject,
   updateProjectLastActive,
   createMemory,
   getMemoriesByIds,
+  getMemoryIds,
   getMemoryById,
   incrementAccessCount,
   recordFeedback,
@@ -18,6 +18,7 @@ import { getVectorStore } from "../embeddings/vector-store.js";
 import { getBM25Index, reciprocalRankFusion } from "../embeddings/bm25.js";
 import { rerank } from "../embeddings/reranker.js";
 import { recordLog } from "./log-service.js";
+import { resolveProjectFromPath, findDuplicate, autoResolveConflicts, tuneImportance } from "./smart-manager.js";
 
 export const CreateProjectSchema = z.object({
   name: z.string(),
@@ -36,6 +37,7 @@ export const RememberSchema = z.object({
   type: z.enum(["bug", "decision", "pattern", "learning", "general"]),
   project_id: z.string().optional(),
   project_name: z.string().optional(),
+  cwd: z.string().optional(),
   title: z.string().optional(),
   tags: z.array(z.string()).optional(),
   metadata: z.record(z.unknown()).optional(),
@@ -65,7 +67,8 @@ export const LogBugSchema = z.object({
   context: z.string(),
   solution: z.string(),
   project_id: z.string().optional(),
-  project_name: z.string().optional()
+  project_name: z.string().optional(),
+  cwd: z.string().optional()
 });
 
 export async function createProjectService(args: unknown) {
@@ -107,37 +110,22 @@ export async function getProjectContextService(args: unknown) {
 
 export async function rememberService(args: unknown) {
   const parsed = RememberSchema.parse(args);
-  const projectId = resolveProjectId(parsed.project_id, parsed.project_name);
+  const projectId = resolveProjectId(parsed.project_id, parsed.project_name, parsed.cwd);
   const embedder = getEmbedder();
   const fullText = parsed.title ? `${parsed.title}. ${parsed.content}` : parsed.content;
   const embedding = await embedder.embed(fullText);
 
-  // Conflict guardian: detect near-duplicate / superseding memory (same project).
-  const store = getVectorStore();
-  let conflict: { id: string; title: string; similarity: number; type: string } | null = null;
-  if (parsed.type === "decision" && store.size > 0) {
-    const simHits = store.search(embedding, 5);
-    const hitsMem = getMemoriesByIds(simHits.map((h) => h.id));
-    for (const h of simHits) {
-      const m = hitsMem.find((x) => x.id === h.id);
-      if (!m || m.superseded_by) continue;
-      if (projectId && m.project_id !== projectId) continue;
-      if (h.similarity >= 0.9) {
-        conflict = { id: m.id, title: m.title, similarity: h.similarity, type: m.type };
-        break;
-      }
-    }
-  }
-
-  // Exact duplicate (>0.95) and not forced → keep existing, skip creation (dedup).
-  if (conflict && conflict.similarity >= 0.95 && !parsed.force) {
-    recordLog({ action: "memory_deduped", entityType: "memory", entityId: conflict.id, projectId, summary: `Duplikat dilewati: ${conflict.title}`, source: "agent", metadata: { similarity: conflict.similarity } });
+  // Auto-dedup real-time: skip creation if near-duplicate exists (same project).
+  const dup = findDuplicate(embedding, projectId);
+  if (dup && dup.similarity >= 0.95 && !parsed.force) {
+    recordLog({ action: "memory_deduped", entityType: "memory", entityId: dup.id, projectId, summary: `Duplikat dilewati: ${dup.title}`, source: "smart-manager", metadata: { similarity: dup.similarity } });
     return {
       success: true,
-      memory: { id: conflict.id, type: conflict.type as Memory["type"], title: conflict.title },
+      memory: { id: dup.id, type: parsed.type, title: dup.title },
       message: "Duplicate detected; existing memory kept (pass force:true to override)",
-      duplicate_of: conflict.id,
-      similarity: conflict.similarity
+      duplicate_of: dup.id,
+      similarity: dup.similarity,
+      auto_detected_project: Boolean(parsed.cwd && !parsed.project_id && !parsed.project_name)
     };
   }
 
@@ -152,12 +140,17 @@ export async function rememberService(args: unknown) {
     importance: 0.5
   });
 
-  // Related-but-updated (0.9..0.95): supersede the older one (versioning), keep both linked.
+  // Conflict auto-resolve: supersede older conflicting decision (versioning).
   let superseded: { id: string; title: string; similarity: number } | null = null;
-  if (conflict && conflict.similarity < 0.95) {
-    supersedeMemory(conflict.id, memory.id);
-    superseded = { id: conflict.id, title: conflict.title, similarity: conflict.similarity };
-    recordLog({ action: "memory_superseded", entityType: "memory", entityId: conflict.id, projectId, summary: `Ditinakhtuilirkan oleh ${memory.id}: ${conflict.title}`, source: "agent", metadata: { new_id: memory.id, similarity: conflict.similarity } });
+  const resolved = autoResolveConflicts(memory.id, embedding, projectId);
+  if (resolved.superseded) {
+    const old = getMemoriesByIds([resolved.superseded])[0];
+    superseded = { id: resolved.superseded, title: old?.title ?? resolved.superseded, similarity: resolved.similarity };
+  }
+
+  // Bump importance if this is a high-signal memory type
+  if (parsed.type === "decision" || parsed.type === "bug") {
+    tuneImportance(memory.id);
   }
 
   recordLog({ action: "memory_created", entityType: "memory", entityId: memory.id, projectId, summary: `[${parsed.type}] ${memory.title}`, source: "agent", metadata: { type: parsed.type, via: "remember", superseded: superseded?.id ?? null } });
@@ -170,8 +163,9 @@ export async function rememberService(args: unknown) {
       title: memory.title,
       tags: memory.tags
     },
-    message: superseded ? "Memory stored; older version superseded" : "Memory stored successfully",
-    superseded
+    message: superseded ? "Memory stored; older conflicting decision superseded" : "Memory stored successfully",
+    superseded,
+    auto_detected_project: Boolean(parsed.cwd && !parsed.project_id && !parsed.project_name)
   };
 }
 
@@ -185,6 +179,9 @@ export async function feedbackService(args: unknown) {
   if (!before) return { success: false, error: `Memory not found: ${parsed.memory_id}` };
   const counts = recordFeedback(parsed.memory_id, parsed.useful);
   if (!counts) return { success: false, error: `Memory not found: ${parsed.memory_id}` };
+  // Auto-tune importance after feedback
+  tuneImportance(parsed.memory_id);
+
   recordLog({
     action: "memory_feedback",
     entityType: "memory",
@@ -232,30 +229,18 @@ export async function recallService(args: unknown) {
 
   const store = getVectorStore();
 
-  // Build the valid id pool (project + type filter) for index scoping
+  // Build the valid id pool (project + type filter) for index scoping.
+  // Lightweight id-only query — embedding BLOBs are not loaded.
   let scopePool: Set<string> | null = null;
-  if (projectId) {
-    const projectMemories = getMemoriesByProject(projectId, 5000);
-    scopePool = new Set(projectMemories.map((m) => m.id));
-  }
-  if (type && scopePool) {
-    const filtered = getMemoriesByIds([...scopePool]);
-    scopePool = new Set(filtered.filter((m) => m.type === type).map((m) => m.id));
-  } else if (type) {
-    const all = getMemoriesByIds([...store.size ? [] : []]);
-    // fallback: scan DB for type
-    const scoped = projectId ? getMemoriesByProject(projectId!, 5000) : getAllMemories(5000);
-    scopePool = new Set(scoped.filter((m) => m.type === type).map((m) => m.id));
+  if (projectId || type) {
+    scopePool = new Set(getMemoryIds({ projectId: projectId ?? undefined, type }));
   }
 
-  // 1. Semantic search (vector store)
+  // 1. Semantic search (vector store, scoped via pool)
   const semanticResults = store.search(queryEmbedding, candidatePool, {
-    pool: scopePool ? undefined : undefined
+    pool: scopePool ?? undefined
   });
-  // apply scope filter manually for precision
-  const scopedSemantic = scopePool
-    ? semanticResults.filter((r) => scopePool!.has(r.id))
-    : semanticResults;
+  const scopedSemantic = semanticResults;
 
   // 2. BM25 keyword search
   const bm25 = getBM25Index();
@@ -335,8 +320,8 @@ export async function recallService(args: unknown) {
 }
 
 export async function logBugService(args: unknown) {
-  const { error, context, solution, project_id, project_name } = LogBugSchema.parse(args);
-  const projectId = resolveProjectId(project_id, project_name);
+  const { error, context, solution, project_id, project_name, cwd } = LogBugSchema.parse(args);
+  const projectId = resolveProjectId(project_id, project_name, cwd);
   const content = `Error: ${error}\n\nContext: ${context}\n\nSolution: ${solution}`;
   const embedder = getEmbedder();
   const embedding = await embedder.embed(content);
@@ -366,8 +351,11 @@ export async function logBugService(args: unknown) {
   };
 }
 
-function resolveProjectId(projectId?: string, projectName?: string): string | null {
+function resolveProjectId(projectId?: string, projectName?: string, cwd?: string | null): string | null {
   if (projectId) return projectId;
+  // Auto-detect / auto-register from cwd before falling back to name hint
+  const fromPath = resolveProjectFromPath(cwd, projectName ?? null);
+  if (fromPath) return fromPath;
   if (!projectName) return null;
 
   const project = getProject(projectName);

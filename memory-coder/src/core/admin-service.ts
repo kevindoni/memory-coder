@@ -18,6 +18,7 @@ import { countLogs, getLogs, LogFilter } from "../db/index.js";
 import { getEmbedder } from "../embeddings/index.js";
 import { indexProjectGit, smartSummaryProject } from "./git-indexer.js";
 import { recordLog } from "./log-service.js";
+import { getSmartStats, expireStaleMemories, autoScopeUnscoped } from "./smart-manager.js";
 
 function normalizeFilter(raw: Record<string, unknown>): MemoryFilter {
   const filter: MemoryFilter = {};
@@ -36,6 +37,22 @@ function normalizeFilter(raw: Record<string, unknown>): MemoryFilter {
 
 export async function statsService() {
   return { success: true, ...getStats() };
+}
+
+export async function smartStatusService() {
+  return { success: true, ...getSmartStats() };
+}
+
+export async function smartExpireService(args: { apply?: boolean } = {}) {
+  const apply = Boolean(args.apply);
+  const result = expireStaleMemories(!apply);
+  return { success: true, ...result, applied: apply };
+}
+
+export async function smartScopeService(args: { apply?: boolean } = {}) {
+  const dryRun = !Boolean(args.apply);
+  const result = autoScopeUnscoped(dryRun);
+  return { success: true, ...result, applied: !dryRun };
 }
 
 export async function listProjectsService() {

@@ -9,7 +9,9 @@ import {
 import { startBridge } from "./bridge/http.js";
 
 async function main() {
-  await initDatabase("./data/memory.db");
+  const { loadEnvFile } = await import("./utils/env.js");
+  loadEnvFile();
+  await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
   const [,, command, ...rest] = process.argv;
 
   if (!command || command === "help" || command === "--help" || command === "-h") {

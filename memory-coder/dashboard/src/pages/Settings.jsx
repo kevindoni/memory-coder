@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Settings as Cog, Cpu, RefreshCw, Loader2, Database, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
-import { api } from "../api.js";
+import { Settings as Cog, Cpu, RefreshCw, Loader2, Database, AlertTriangle, CheckCircle2, Clock, KeyRound } from "lucide-react";
+import { api, getApiKey, setApiKey } from "../api.js";
 import TypeBadge from "../components/TypeBadge.jsx";
 import { ALL_TYPES, typeMeta, cn, timeAgo } from "../lib.jsx";
 
@@ -10,6 +10,8 @@ export default function Settings({ stats }) {
   const [reembedResult, setReembedResult] = useState(null);
   const [sample, setSample] = useState([]);
   const [stale, setStale] = useState([]);
+  const [apiKeyInput, setApiKeyInput] = useState(getApiKey());
+  const [keySaved, setKeySaved] = useState(false);
 
   useEffect(() => {
     api.embedStatus().then(setEmbed).catch(() => {});
@@ -60,6 +62,29 @@ export default function Settings({ stats }) {
           <Field label="Model aktif" value={embed?.model || "…"} mono />
           <Field label="Dimensi" value={embed ? `${embed.dim}-d` : "…"} mono />
         </div>
+
+        {/* API Key Section */}
+        <div className="mt-4 border-t border-white/[0.06] pt-4">
+          <label className="mb-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+            <KeyRound className="h-3.5 w-3.5" /> API Key (X-API-Key)
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="password"
+              value={apiKeyInput}
+              onChange={(e) => { setApiKeyInput(e.target.value); setKeySaved(false); }}
+              placeholder="Paste API key here..."
+              className="flex-1 rounded-md border border-white/[0.06] bg-white/[0.02] px-2 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-sky-500"
+            />
+            <button
+              onClick={() => { setApiKey(apiKeyInput); setKeySaved(true); setTimeout(() => setKeySaved(false), 2000); }}
+              className="btn btn-primary !px-3 !py-1 text-xs"
+            >
+              {keySaved ? "Saved" : "Save"}
+            </button>
+          </div>
+        </div>
+
         <p className="mt-2 text-[11px] text-slate-500">
           {embed?.model?.includes("multilingual")
             ? "✓ Multilingual aktif ( recall Indonesia sudah optimal)."
