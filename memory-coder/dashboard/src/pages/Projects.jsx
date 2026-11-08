@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FolderKanban, MapPin, Hash, ChevronRight, Loader2, GitBranch, CheckCircle2, AlertCircle, Info, Pencil } from "lucide-react";
+import { FolderKanban, MapPin, Hash, ChevronRight, Loader2, GitBranch, CheckCircle2, AlertCircle, Info, Pencil, BookOpen, Download, Copy, X } from "lucide-react";
 import { api } from "../api.js";
 import DeleteButton from "../components/DeleteButton.jsx";
 import ProjectDetailModal from "../components/ProjectDetailModal.jsx";
@@ -11,6 +11,7 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState({});
   const [result, setResult] = useState({});
+  const [skillModal, setSkillModal] = useState(null);
   const [detail, setDetail] = useState(null);
   const [edit, setEdit] = useState(null);
 
@@ -42,6 +43,18 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
       onNeedsRefresh?.();
     } catch (e) {
       setResult((s) => ({ ...s, [id]: { success: false, error: e.message } }));
+    } finally {
+      setBusy((s) => ({ ...s, [id]: null }));
+    }
+  };
+
+  const handleSkill = async (id) => {
+    setBusy((s) => ({ ...s, [id]: "skill" }));
+    try {
+      const r = await api.exportSkill(id);
+      setSkillModal(r);
+    } catch (e) {
+      alert("Gagal export skill: " + e.message);
     } finally {
       setBusy((s) => ({ ...s, [id]: null }));
     }
@@ -128,6 +141,15 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
                   Index
                 </button>
                 <button
+                  onClick={() => handleSkill(p.id)}
+                  disabled={!!busy[p.id]}
+                  className="btn btn-ghost !py-1 text-xs text-violet-600 dark:text-violet-300 hover:bg-violet-500/10"
+                  title="Export SKILL.md - pengetahuan proyek siap dimuat agent (OpenCode/Claude/Cursor)"
+                >
+                  {busy[p.id] === "skill" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <BookOpen className="h-3.5 w-3.5" />}
+                  Skill
+                </button>
+                <button
                   onClick={() => onOpenMemories({ project_id: p.id })}
                   className="btn btn-ghost !py-1 text-xs text-emerald-600 dark:text-emerald-300 hover:bg-emerald-500/10"
                 >
@@ -162,6 +184,48 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
       </div>
       <ProjectDetailModal project={projects.find((p) => p.id === detail?.id) || detail} onClose={() => setDetail(null)} />
       {edit && <EditProjectModal project={edit} onClose={() => setEdit(null)} onSaved={load} />}
+      {skillModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setSkillModal(null)}>
+          <div className="card max-h-[85vh] w-full max-w-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/[0.06] px-5 py-4">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Export Agent Skill</h3>
+                <p className="text-[11px] text-slate-500 dark:text-slate-500">
+                  {skillModal.filename} · {skillModal.stats.total} memori → {skillModal.stats.decisions + skillModal.stats.bugs + skillModal.stats.patterns + skillModal.stats.learnings} entri terkurasi
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const blob = new Blob([skillModal.content], { type: "text/markdown" });
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = skillModal.filename;
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                  }}
+                  className="btn btn-primary !py-1.5 text-xs"
+                >
+                  <Download className="h-3.5 w-3.5" /> Unduh
+                </button>
+                <button
+                  onClick={() => navigator.clipboard?.writeText(skillModal.content)}
+                  className="btn btn-ghost !py-1.5 text-xs"
+                >
+                  <Copy className="h-3.5 w-3.5" /> Copy
+                </button>
+                <button onClick={() => setSkillModal(null)} className="btn btn-ghost !p-1.5"><X className="h-4 w-4" /></button>
+              </div>
+            </div>
+            <div className="scrollbar-thin max-h-[70vh] overflow-y-auto">
+              <pre className="whitespace-pre-wrap p-5 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-slate-300">{skillModal.content}</pre>
+            </div>
+            <div className="border-t border-slate-200 dark:border-white/[0.06] px-5 py-3 text-[11px] text-slate-500 dark:text-slate-500">
+              Taruh di <span className="font-mono">~/.config/opencode/skills/&lt;nama&gt;/SKILL.md</span> (OpenCode), <span className="font-mono">.agents/skills/</span> (Claude/Cursor), lalu restart agent.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

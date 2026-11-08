@@ -53,6 +53,7 @@ export const api = {
   deleteProject: (id) => request(`/admin/projects/${id}`, { method: "DELETE" }),
   updateProject: (id, body) => request(`/admin/projects/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   indexProject: (id) => request(`/admin/projects/${id}/index`, { method: "POST" }),
+  exportSkill: (id) => request(`/admin/projects/${id}/export-skill`),
   logs: (params = {}) => {
     const qs = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {

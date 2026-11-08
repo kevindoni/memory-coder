@@ -19,6 +19,7 @@ import {
   evalTrendService,
   deleteMemoryService,
   deleteProjectService,
+  exportSkillService,
   embedStatusService,
   getMemoryService,
   indexProjectService,
@@ -110,6 +111,7 @@ export async function startBridge(port = 3333) {
   adminRouter.get("/embed-status", (_req, res) => respond(res, Promise.resolve(embedStatusService())));
   adminRouter.get("/conflicts", (req: Request, res) => respond(res, Promise.resolve(conflictsService(req.query as Record<string, unknown>))));
   adminRouter.get("/eval-trend", (_req: Request, res) => respond(res, Promise.resolve(evalTrendService())));
+  adminRouter.get("/projects/:id/export-skill", (req: Request, res) => respond(res, Promise.resolve(exportSkillService(String(req.params.id)))));
   adminRouter.get("/memories/:id/chain", (req: Request, res) => respond(res, Promise.resolve(supersedeChainService(String(req.params.id)))));
   adminRouter.get("/logs", (req: Request, res) => respond(res, listLogsService(req.query as Record<string, unknown>)));
 

@@ -7,7 +7,9 @@ import {
   deleteProject,
   getAllMemories,
   getAllProjects,
+  getMemoriesByProject,
   getMemoryById,
+  getProject,
   getStats,
   getSupersedeChain,
   Memory,
@@ -326,4 +328,76 @@ export async function deleteProjectService(id: string) {
 
 export async function indexProjectService(id: string) {
   return indexProjectGit(id);
+}
+
+/**
+ * Build a portable Agent Skill (SKILL.md) from a project's highest-value
+ * memories. Rides the agent-skills convention (frontmatter + distilled
+ * knowledge) so any agent runtime (OpenCode, Claude, Cursor) can load it;
+ * includes live-query instructions pointing back at the bridge.
+ */
+export function exportSkillService(id: string) {
+  const project = getProject(id);
+  if (!project) return { success: false, error: "Project not found" };
+
+  const mems = getMemoriesByProject(id, 5000).filter((m: Memory) => !m.superseded_by);
+  const score = (m: Memory) =>
+    (m.useful_count || 0) * 3 - (m.not_useful_count || 0) * 2 + (m.access_count || 0) * 0.5 + (m.importance || 0) * 4;
+
+  const pick = (type: string, n: number, maxLen: number) =>
+    mems.filter((m: Memory) => m.type === type).sort((a: Memory, b: Memory) => score(b) - score(a)).slice(0, n)
+      .map((m: Memory) => {
+        const body = (m.content || "").replace(/\s+\n/g, "\n").trim();
+        return `- **${(m.title || "").replace(/\n/g, " ").slice(0, 100)}**\n  ${body.length > maxLen ? body.slice(0, maxLen).trimEnd() + "…" : body}`;
+      });
+
+  const decisions = pick("decision", 12, 320);
+  const bugs = pick("bug", 10, 320);
+  const patterns = pick("pattern", 8, 320);
+  const learnings = pick("learning", 6, 260);
+  const stack = (project.tech_stack || []).join(", ") || "-";
+  const port = Number(process.env.MEMORY_CODER_PORT || 3333);
+
+  const content = `---
+name: ${project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-memory
+description: Kurasi pengetahuan proyek ${project.name} (${stack}) — keputusan, bug terpecahkan, pola, dan pembelajaran dari ${mems.length} memori. Query live tersedia via REST bridge.
+---
+
+# ${project.name} — Project Memory Skill
+
+${project.description ? `> ${project.description}\n` : ""}
+Distilasi otomatis dari ${mems.length} memori (disusun dari feedback + akses + importance).
+
+## Keputusan arsitektur (${decisions.length})
+${decisions.length ? decisions.join("\n") : "- (belum ada)"}
+
+## Bug terpecahkan (${bugs.length})
+${bugs.length ? bugs.join("\n") : "- (belum ada)"}
+
+## Pola (${patterns.length})
+${patterns.length ? patterns.join("\n") : "- (belum ada)"}
+
+## Pembelajaran (${learnings.length})
+${learnings.length ? learnings.join("\n") : "- (belum ada)"}
+
+## Query live
+Kurasi ini snapshot. Untuk memori terbaru/lebih lengkap, tanyakan REST bridge
+(loopback, tanpa autentikasi default):
+
+\`\`\`bash
+curl -s -X POST http://127.0.0.1:${port}/v1/recall \\
+  -H "Content-Type: application/json" \\
+  -d '{"query":"<topik>","project_name":"${project.name}","limit":5}'
+\`\`\`
+
+Atau via tool MCP \`memory-coder\` (recall) bila bridge terdaftar.
+Generated ${new Date().toISOString().slice(0, 10)} oleh memory-coder.
+`;
+
+  return {
+    success: true,
+    filename: `${project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-memory.SKILL.md`,
+    content,
+    stats: { total: mems.length, decisions: decisions.length, bugs: bugs.length, patterns: patterns.length, learnings: learnings.length }
+  };
 }
