@@ -47,7 +47,7 @@ export default function Graph({ projects = [] }) {
                   <button
                     key={tag}
                     onClick={() => setSel(sel === tag ? "" : tag)}
-                    className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono transition-colors", sel === tag ? "bg-emerald-500/20 text-emerald-200 ring-1 ring-emerald-500/40" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 hover:dark:bg-white/10")}
+                    className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono transition-colors", sel === tag ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-200 ring-1 ring-emerald-500/40" : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 hover:dark:bg-white/10")}
                     style={{ fontSize: `${size}px` }}
                   >
                     <Hash className="h-3 w-3" />{tag}

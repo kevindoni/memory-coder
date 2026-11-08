@@ -99,7 +99,7 @@ export default function SmartManager() {
       </div>
 
       {error && <div className="card p-4 text-sm text-rose-600 dark:text-rose-300">Gagal: {error}</div>}
-      {toast && <div className="card border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-200">{toast}</div>}
+      {toast && <div className="card border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-700 dark:text-emerald-200">{toast}</div>}
 
       {data && (
         <>
