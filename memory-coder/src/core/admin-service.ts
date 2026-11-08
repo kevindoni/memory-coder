@@ -12,6 +12,7 @@ import {
   MemoryFilter,
   searchMemories,
   updateEmbedding,
+  updateMemoryProject,
   updateProject
 } from "../db/index.js";
 import { countLogs, getLogs, LogFilter } from "../db/index.js";
@@ -53,6 +54,23 @@ export async function smartScopeService(args: { apply?: boolean } = {}) {
   const dryRun = !Boolean(args.apply);
   const result = autoScopeUnscoped(dryRun);
   return { success: true, ...result, applied: !dryRun };
+}
+
+export async function updateMemoryService(id: string, args: { project_id?: string | null } = {}) {
+  if (!("project_id" in args)) {
+    return { success: false, error: "Nothing to update: provide project_id" };
+  }
+  const ok = updateMemoryProject(id, args.project_id ?? null);
+  if (!ok) return { success: false, error: `Memory not found: ${id}` };
+  recordLog({
+    action: "memory_rescoped",
+    entityType: "memory",
+    entityId: id,
+    projectId: args.project_id ?? null,
+    summary: `Memory re-scoped to project ${args.project_id ?? "(unscoped)"}`,
+    source: "admin"
+  });
+  return { success: true, memory: getMemoryById(id) };
 }
 
 export async function listProjectsService() {

@@ -31,6 +31,7 @@ import {
   smartScopeService,
   statsService,
   supersedeChainService,
+  updateMemoryService,
   updateProjectService
 } from "../core/admin-service.js";
 import { askService, llmStatusService } from "../core/rag-service.js";
@@ -113,6 +114,7 @@ export async function startBridge(port = 3333) {
   adminRouter.get("/memories/:id/related", (req: Request, res) => respond(res, Promise.resolve(relatedMemoriesService({ memory_id: req.params.id, ...req.query }))));
   adminRouter.get("/suggest-patterns", (req: Request, res) => respond(res, Promise.resolve(suggestPatternsService(req.query as Record<string, unknown>))));
   adminRouter.delete("/memories/:id", (req: Request, res) => respond(res, deleteMemoryService(String(req.params.id))));
+  adminRouter.put("/memories/:id", writeLimiter, (req: Request, res) => respond(res, Promise.resolve(updateMemoryService(String(req.params.id), req.body as { project_id?: string | null }))));
   adminRouter.delete("/projects/:id", (req: Request, res) => respond(res, deleteProjectService(String(req.params.id))));
   adminRouter.put("/projects/:id", writeLimiter, (req: Request, res) => respond(res, Promise.resolve(updateProjectService(String(req.params.id), req.body))));
   adminRouter.post("/projects/:id/index", (req: Request, res) => respond(res, indexProjectService(String(req.params.id))));
