@@ -5,11 +5,11 @@ import { cn } from "../lib.jsx";
 
 function StatCard({ icon: Icon, label, value, accent = "sky" }) {
   const accents = {
-    sky: "text-sky-300 bg-sky-500/10",
-    emerald: "text-emerald-300 bg-emerald-500/10",
-    amber: "text-amber-300 bg-amber-500/10",
-    rose: "text-rose-300 bg-rose-500/10",
-    violet: "text-violet-300 bg-violet-500/10"
+    sky: "text-emerald-600 dark:text-emerald-300 bg-emerald-500/10",
+    emerald: "text-emerald-600 dark:text-emerald-300 bg-emerald-500/10",
+    amber: "text-amber-600 dark:text-amber-300 bg-amber-500/10",
+    rose: "text-rose-600 dark:text-rose-300 bg-rose-500/10",
+    violet: "text-violet-600 dark:text-violet-300 bg-violet-500/10"
   };
   return (
     <div className="card flex items-center gap-3 p-4">
@@ -17,8 +17,8 @@ function StatCard({ icon: Icon, label, value, accent = "sky" }) {
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0">
-        <div className="truncate text-xs text-slate-500">{label}</div>
-        <div className="text-xl font-semibold text-white">{value}</div>
+        <div className="truncate text-xs text-slate-400 dark:text-slate-500">{label}</div>
+        <div className="text-xl font-semibold text-slate-900 dark:text-white">{value}</div>
       </div>
     </div>
   );
@@ -26,9 +26,9 @@ function StatCard({ icon: Icon, label, value, accent = "sky" }) {
 
 function ConfigRow({ label, value, on }) {
   return (
-    <div className="flex items-center justify-between rounded-md bg-white/[0.02] px-3 py-2 text-sm">
-      <span className="text-slate-400">{label}</span>
-      <span className={cn("rounded px-2 py-0.5 font-mono text-[11px]", on ? "bg-emerald-500/10 text-emerald-300" : "bg-slate-500/10 text-slate-400")}>
+    <div className="flex items-center justify-between rounded-md bg-slate-50 dark:bg-white/[0.02] px-3 py-2 text-sm">
+      <span className="text-slate-500 dark:text-slate-400">{label}</span>
+      <span className={cn("rounded px-2 py-0.5 font-mono text-[11px]", on ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300" : "bg-slate-500/10 text-slate-500 dark:text-slate-400")}>
         {value}
       </span>
     </div>
@@ -88,17 +88,17 @@ export default function SmartManager() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-            <Cpu className="h-5 w-5 text-sky-300" /> Smart Manager
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
+            <Cpu className="h-5 w-5 text-emerald-600 dark:text-emerald-300" /> Smart Manager
           </h2>
-          <p className="text-sm text-slate-500">Auto-detect project, dedup real-time, conflict auto-resolve, importance tuning, expire stale.</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Auto-detect project, dedup real-time, conflict auto-resolve, importance tuning, expire stale.</p>
         </div>
         <button onClick={load} disabled={loading} className="btn btn-ghost !py-1.5 text-xs">
           {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Refresh
         </button>
       </div>
 
-      {error && <div className="card p-4 text-sm text-rose-300">Gagal: {error}</div>}
+      {error && <div className="card p-4 text-sm text-rose-600 dark:text-rose-300">Gagal: {error}</div>}
       {toast && <div className="card border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-200">{toast}</div>}
 
       {data && (
@@ -113,7 +113,7 @@ export default function SmartManager() {
           </div>
 
           <div className="card p-4">
-            <h3 className="mb-3 text-sm font-medium text-slate-300">Konfigurasi aktif</h3>
+            <h3 className="mb-3 text-sm font-medium text-slate-600 dark:text-slate-300">Konfigurasi aktif</h3>
             <div className="grid gap-1.5 sm:grid-cols-2">
               <ConfigRow label="Auto-detect project" value={String(cfg.autoDetect)} on={cfg.autoDetect} />
               <ConfigRow label="Dedup threshold" value={cfg.dedupThreshold} on={cfg.dedupThreshold > 0} />
@@ -126,8 +126,8 @@ export default function SmartManager() {
 
           <div className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-sm font-medium text-slate-300">Auto-expire stale memories</h3>
-              <p className="text-xs text-slate-500">Hapus memori lama, jarang diakses, importance rendah, tanpa feedback positif.</p>
+              <h3 className="text-sm font-medium text-slate-600 dark:text-slate-300">Auto-expire stale memories</h3>
+              <p className="text-xs text-slate-400 dark:text-slate-500">Hapus memori lama, jarang diakses, importance rendah, tanpa feedback positif.</p>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => runExpire(false)} disabled={busy} className="btn btn-ghost !py-1.5 text-xs">
@@ -141,8 +141,8 @@ export default function SmartManager() {
 
           <div className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="flex items-center gap-1.5 text-sm font-medium text-slate-300"><FolderSymlink className="h-4 w-4 text-violet-300" /> Auto-scope unscoped memories</h3>
-              <p className="text-xs text-slate-500">Petakan memori tanpa project ke project terdaftar berdasarkan nama/path di konten.</p>
+              <h3 className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-300"><FolderSymlink className="h-4 w-4 text-violet-600 dark:text-violet-300" /> Auto-scope unscoped memories</h3>
+              <p className="text-xs text-slate-400 dark:text-slate-500">Petakan memori tanpa project ke project terdaftar berdasarkan nama/path di konten.</p>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => runScope(false)} disabled={busy} className="btn btn-ghost !py-1.5 text-xs">

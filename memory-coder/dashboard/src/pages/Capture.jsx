@@ -94,8 +94,8 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-white">Capture Conversation</h2>
-        <p className="text-sm text-slate-500">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Capture Conversation</h2>
+        <p className="text-sm text-slate-400 dark:text-slate-500">
           Drop file atau tempel percakapan — AI ekstrak memori otomatis.
         </p>
       </div>
@@ -105,14 +105,14 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
         <div className={cn(
           "flex items-center gap-2 rounded-lg px-3 py-2 text-xs",
           watcher.active && watcher.llmConfigured
-            ? "bg-emerald-500/10 text-emerald-300"
-            : "bg-amber-500/10 text-amber-300"
+            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
+            : "bg-amber-500/10 text-amber-600 dark:text-amber-300"
         )}>
           <FolderSearch className="h-3.5 w-3.5 shrink-0" />
           {watcher.active && watcher.llmConfigured ? (
             <span>
-              Auto file watcher <strong>active</strong> — drop <code className="rounded bg-white/10 px-1">.txt</code>/<code className="rounded bg-white/10 px-1">.md</code> ke{" "}
-              <code className="rounded bg-white/10 px-1">{watcher.watchDir}</code>
+              Auto file watcher <strong>active</strong> — drop <code className="rounded bg-slate-100 dark:bg-white/10 px-1">.txt</code>/<code className="rounded bg-slate-100 dark:bg-white/10 px-1">.md</code> ke{" "}
+              <code className="rounded bg-slate-100 dark:bg-white/10 px-1">{watcher.watchDir}</code>
               {" · "}
               <Zap className="inline h-3 w-3" /> {watcher.processed} processed
               {watcher.pending > 0 && ` · ${watcher.pending} pending`}
@@ -136,18 +136,18 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
         onClick={() => fileRef.current?.click()}
         className={cn(
           "card flex cursor-pointer flex-col items-center gap-2 border-2 border-dashed py-6 text-center transition-colors",
-          dragOver ? "border-sky-400 bg-sky-500/5" : "border-slate-700 hover:border-slate-600"
+          dragOver ? "border-emerald-400 bg-emerald-500/5" : "border-slate-700 hover:border-slate-600"
         )}
       >
         {uploading ? (
-          <Loader2 className="h-6 w-6 animate-spin text-sky-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-300" />
         ) : (
-          <UploadCloud className={cn("h-6 w-6", dragOver ? "text-sky-400" : "text-slate-500")} />
+          <UploadCloud className={cn("h-6 w-6", dragOver ? "text-emerald-600 dark:text-emerald-300" : "text-slate-400 dark:text-slate-500")} />
         )}
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           {uploading ? "Uploading..." : dragOver ? "Drop file di sini" : "Drag & drop file .txt / .md atau klik untuk browse"}
         </p>
-        <p className="text-[11px] text-slate-600">
+        <p className="text-[11px] text-slate-400 dark:text-slate-600">
           File auto-diproses oleh file watcher → AI ekstrak memori
         </p>
         <input
@@ -167,15 +167,15 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
             <option key={p.id} value={p.id}>{p.name}</option>
           ))}
         </select>
-        <button onClick={paste} className="btn btn-ghost text-xs text-slate-400">
+        <button onClick={paste} className="btn btn-ghost text-xs text-slate-500 dark:text-slate-400">
           <ClipboardPaste className="h-3.5 w-3.5" /> Paste dari clipboard
         </button>
         {conversation && (
-          <button onClick={clear} className="btn btn-ghost text-xs text-slate-400">
+          <button onClick={clear} className="btn btn-ghost text-xs text-slate-500 dark:text-slate-400">
             <Trash2 className="h-3.5 w-3.5" /> Bersihkan
           </button>
         )}
-        <span className="ml-auto font-mono text-[10px] text-slate-600">{conversation.length} karakter</span>
+        <span className="ml-auto font-mono text-[10px] text-slate-400 dark:text-slate-600">{conversation.length} karakter</span>
       </div>
 
       {/* Textarea */}
@@ -185,12 +185,12 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
           onChange={(e) => setConversation(e.target.value)}
           placeholder={"Atau tempel percakapan secara manual di sini…\n\nContoh:\nUser: Bagaimana cara setup auth?\nAssistant: Kita pakai NextAuth + bcryptjs…"}
           rows={8}
-          className="w-full resize-none rounded-xl border-0 bg-transparent px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-0"
+          className="w-full resize-none rounded-xl border-0 bg-transparent px-4 py-3 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 placeholder:dark:text-slate-600 focus:outline-none focus:ring-0"
         />
       </div>
 
       {error && (
-        <div className="flex items-center gap-1.5 rounded-lg bg-rose-500/10 px-3 py-2 text-xs text-rose-300">
+        <div className="flex items-center gap-1.5 rounded-lg bg-rose-500/10 px-3 py-2 text-xs text-rose-600 dark:text-rose-300">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" /> {error}
         </div>
       )}
@@ -211,13 +211,13 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
       {result && result.success && (
         <div className="space-y-3">
           {result.fileUploaded ? (
-            <div className="flex items-center gap-2 rounded-lg bg-sky-500/10 px-3 py-2 text-sm text-sky-300">
+            <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-300">
               <CheckCircle2 className="h-4 w-4" />
-              File <code className="rounded bg-white/10 px-1">{result.file}</code> di-upload — file watcher akan memproses otomatis. Lihat Activity Log untuk hasil.
+              File <code className="rounded bg-slate-100 dark:bg-white/10 px-1">{result.file}</code> di-upload — file watcher akan memproses otomatis. Lihat Activity Log untuk hasil.
             </div>
           ) : (
             <>
-              <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
+              <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-300">
                 <CheckCircle2 className="h-4 w-4" />
                 {result.extracted > 0
                   ? `${result.extracted} memori berhasil diekstrak${result.project ? ` untuk ${result.project}` : ""}`
@@ -235,13 +235,13 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
                           <span className={cn("inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-medium", meta.bg, meta.ring, meta.color)}>
                             <Icon className="h-3 w-3" /> {meta.label}
                           </span>
-                          <h4 className="text-sm font-medium text-white">{m.title}</h4>
+                          <h4 className="text-sm font-medium text-slate-900 dark:text-white">{m.title}</h4>
                         </div>
-                        <p className="mt-2 text-sm text-slate-400">{m.content}</p>
+                        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{m.content}</p>
                         {m.tags?.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1">
                             {m.tags.map((t) => (
-                              <span key={t} className="inline-flex items-center gap-0.5 rounded bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-400">
+                              <span key={t} className="inline-flex items-center gap-0.5 rounded bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-400">
                                 <Tag className="h-2.5 w-2.5" /> {t}
                               </span>
                             ))}

@@ -24,44 +24,44 @@ export default function RelatedPanel({ memory, projectName }) {
   const related = data?.related || [];
 
   return (
-    <div className="border-t border-white/[0.06]">
+    <div className="border-t border-slate-200 dark:border-white/[0.06]">
       <button
         onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
-        className="flex w-full items-center gap-2 px-4 py-2 text-left text-xs text-slate-400 hover:text-slate-200"
+        className="flex w-full items-center gap-2 px-4 py-2 text-left text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 hover:dark:text-slate-200"
       >
         <Link2 className="h-3.5 w-3.5" />
         Memori terkait (knowledge graph)
-        {data && <span className="font-mono text-slate-600">{related.length}</span>}
+        {data && <span className="font-mono text-slate-400 dark:text-slate-600">{related.length}</span>}
         <ChevronDown className={cn("ml-auto h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
       </button>
       {open && (
         <div className="px-4 pb-3">
           {loading ? (
-            <div className="flex items-center gap-2 py-2 text-xs text-slate-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Memuat…</div>
+            <div className="flex items-center gap-2 py-2 text-xs text-slate-400 dark:text-slate-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Memuat…</div>
           ) : error ? (
-            <div className="py-2 text-xs text-rose-300">Gagal: {error}</div>
+            <div className="py-2 text-xs text-rose-600 dark:text-rose-300">Gagal: {error}</div>
           ) : related.length === 0 ? (
-            <div className="py-2 text-xs text-slate-600">Tidak ada memori terkait (entitas tumpang tindih kosong).</div>
+            <div className="py-2 text-xs text-slate-400 dark:text-slate-600">Tidak ada memori terkait (entitas tumpang tindih kosong).</div>
           ) : (
             <div className="space-y-1.5">
               {related.map((r) => {
                 const meta = typeMeta(r.type);
                 return (
-                  <div key={r.id} className="flex items-start gap-2 rounded-md bg-white/[0.02] px-2.5 py-1.5">
+                  <div key={r.id} className="flex items-start gap-2 rounded-md bg-slate-50 dark:bg-white/[0.02] px-2.5 py-1.5">
                     <span className={cn("mt-1 h-1.5 w-1.5 shrink-0 rounded-full", meta.dot)} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs text-slate-200">{r.title}</p>
+                      <p className="truncate text-xs text-slate-700 dark:text-slate-200">{r.title}</p>
                       <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
                         <TypeBadge type={r.type} size="xs" />
                         {r.project_id && projectName?.[r.project_id] && (
-                          <span className="rounded bg-white/5 px-1 py-0.5 font-mono text-[9px] text-slate-500">{projectName[r.project_id]}</span>
+                          <span className="rounded bg-slate-100 dark:bg-white/5 px-1 py-0.5 font-mono text-[9px] text-slate-400 dark:text-slate-500">{projectName[r.project_id]}</span>
                         )}
                         {r.shared?.slice(0, 4).map((s) => (
-                          <span key={s} className="rounded bg-sky-500/10 px-1 py-0.5 font-mono text-[9px] text-sky-300">#{s}</span>
+                          <span key={s} className="rounded bg-emerald-500/10 px-1 py-0.5 font-mono text-[9px] text-emerald-600 dark:text-emerald-300">#{s}</span>
                         ))}
                       </div>
                     </div>
-                    <span className="shrink-0 rounded bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-400" title="entitas/shared">×{r.shared_entities}</span>
+                    <span className="shrink-0 rounded bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-400" title="entitas/shared">×{r.shared_entities}</span>
                   </div>
                 );
               })}

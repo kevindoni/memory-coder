@@ -86,14 +86,14 @@ export default function Logs({ projects = [], signal = 0 }) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-white">Activity Log</h2>
-        <p className="text-sm text-slate-500">{total} aktivitas tercatat di sistem</p>
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Activity Log</h2>
+        <p className="text-sm text-slate-400 dark:text-slate-500">{total} aktivitas tercatat di sistem</p>
       </div>
 
       {/* Filters */}
       <div className="card flex flex-wrap items-center gap-2 p-3">
         <div className="relative min-w-[200px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Cari aktivitas…" className="input !pl-9" />
           {searchText && (
             <button onClick={() => setSearchText("")} className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost !p-1">
@@ -121,7 +121,7 @@ export default function Logs({ projects = [], signal = 0 }) {
           ))}
         </select>
         {hasActiveFilter && (
-          <button onClick={resetFilters} className="btn btn-ghost text-xs text-slate-400">
+          <button onClick={resetFilters} className="btn btn-ghost text-xs text-slate-500 dark:text-slate-400">
             <Filter className="h-3.5 w-3.5" /> Reset
           </button>
         )}
@@ -129,19 +129,19 @@ export default function Logs({ projects = [], signal = 0 }) {
 
       {/* Timeline */}
       {error ? (
-        <div className="card p-6 text-sm text-rose-300">Gagal memuat: {error}</div>
+        <div className="card p-6 text-sm text-rose-600 dark:text-rose-300">Gagal memuat: {error}</div>
       ) : loading ? (
-        <div className="flex items-center gap-2 py-12 text-slate-500">
+        <div className="flex items-center gap-2 py-12 text-slate-400 dark:text-slate-500">
           <Loader2 className="h-4 w-4 animate-spin" /> Memuat log…
         </div>
       ) : logs.length === 0 ? (
-        <div className="card flex flex-col items-center gap-2 py-16 text-slate-600">
+        <div className="card flex flex-col items-center gap-2 py-16 text-slate-400 dark:text-slate-600">
           <Inbox className="h-8 w-8" />
           <p className="text-sm">Belum ada aktivitas tercatat.</p>
         </div>
       ) : (
         <div className="relative space-y-1 pl-4">
-          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/[0.06]" />
+          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-emerald-500/10 dark:bg-white/[0.06]" />
           {logs.map((log) => {
             const meta = logActionMeta(log.action);
             const src = sourceMeta(log.source);
@@ -153,27 +153,27 @@ export default function Logs({ projects = [], signal = 0 }) {
                 <span className={cn("relative z-10 mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full ring-4 ring-slate-950", meta.dot)} />
                 <div className="card min-w-0 flex-1 px-4 py-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={cn("inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-medium", "bg-white/5", meta.color)}>
+                    <span className={cn("inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-medium", "bg-slate-100 dark:bg-white/5", meta.color)}>
                       <Icon className="h-3 w-3" />
                       {meta.label}
                     </span>
-                    <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-400">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-400">
                       <SrcIcon className="h-3 w-3" />
                       {src.label}
                     </span>
                     {proj && (
-                      <span className="rounded-md bg-sky-500/10 px-1.5 py-0.5 font-mono text-[10px] text-sky-300">{proj}</span>
+                      <span className="rounded-md bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-600 dark:text-emerald-300">{proj}</span>
                     )}
-                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] text-slate-600">
+                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] text-slate-400 dark:text-slate-600">
                       <Clock className="h-3 w-3" />
                       {formatDate(log.created_at)}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-sm text-slate-200">{log.summary}</p>
+                  <p className="mt-1.5 text-sm text-slate-700 dark:text-slate-200">{log.summary}</p>
                   {log.metadata && Object.keys(log.metadata).length > 0 && (
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {Object.entries(log.metadata).slice(0, 6).map(([k, v]) => (
-                        <span key={k} className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-500">
+                        <span key={k} className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-400 dark:text-slate-500">
                           {k}: {String(v)}
                         </span>
                       ))}
@@ -189,7 +189,7 @@ export default function Logs({ projects = [], signal = 0 }) {
       {/* Pagination */}
       {total > PAGE_SIZE && (
         <div className="flex items-center justify-between pt-2">
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-400 dark:text-slate-500">
             Halaman {page + 1} dari {totalPages} · {total} total
           </span>
           <div className="flex items-center gap-1">

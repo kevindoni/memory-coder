@@ -56,8 +56,8 @@ export default function Recall({ projects = [] }) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-white">Recall</h2>
-        <p className="text-sm text-slate-500">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Recall</h2>
+        <p className="text-sm text-slate-400 dark:text-slate-500">
           Cari memori secara semantik — uji sendiri ingatan & kepintaran sistem. Hasil diurutkan similarity + utility.
         </p>
       </div>
@@ -65,7 +65,7 @@ export default function Recall({ projects = [] }) {
       {/* Search bar */}
       <form onSubmit={run} className="card flex flex-wrap items-center gap-2 p-3">
         <div className="relative min-w-[260px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <input
             autoFocus
             value={query}
@@ -91,7 +91,7 @@ export default function Recall({ projects = [] }) {
             <option key={t} value={t}>{typeMeta(t).label}</option>
           ))}
         </select>
-        <div className="flex items-center gap-1 text-xs text-slate-500">
+        <div className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
           <Sliders className="h-3.5 w-3.5" />
           <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="input !w-auto !py-1.5 text-xs">
             {[5, 8, 12, 20].map((n) => (
@@ -107,9 +107,9 @@ export default function Recall({ projects = [] }) {
       {/* Examples */}
       {!data && !loading && (
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs text-slate-600">Contoh:</span>
+          <span className="text-xs text-slate-400 dark:text-slate-600">Contoh:</span>
           {EXAMPLES.map((ex) => (
-            <button key={ex} onClick={(e) => run(e, ex)} className="rounded-md bg-white/5 px-2 py-1 text-[11px] text-slate-400 hover:bg-white/10 hover:text-slate-200">
+            <button key={ex} onClick={(e) => run(e, ex)} className="rounded-md bg-slate-100 dark:bg-white/5 px-2 py-1 text-[11px] text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-white/10 hover:text-slate-700 hover:dark:text-slate-200">
               {ex}
             </button>
           ))}
@@ -117,14 +117,14 @@ export default function Recall({ projects = [] }) {
       )}
 
       {/* Error */}
-      {error && <div className="card p-4 text-sm text-rose-300">Gagal: {error}</div>}
+      {error && <div className="card p-4 text-sm text-rose-600 dark:text-rose-300">Gagal: {error}</div>}
 
       {/* Meta */}
       {data && (
-        <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500">
+        <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
           <span>{results.length} hasil</span>
           <span className="font-mono">mode: {data.mode}</span>
-          {data.reranked && <span className="rounded bg-sky-500/10 px-1.5 py-0.5 text-sky-300">reranked</span>}
+          {data.reranked && <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-emerald-600 dark:text-emerald-300">reranked</span>}
           <span className="font-mono">dicari di {data.total_searched} memori</span>
         </div>
       )}
@@ -136,24 +136,24 @@ export default function Recall({ projects = [] }) {
         return (
           <div key={r.id + "-" + i} className="card overflow-hidden">
             <div className="flex items-start gap-3 px-4 py-3">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/5 font-mono text-[11px] text-slate-400">{i + 1}</span>
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-100 dark:bg-white/5 font-mono text-[11px] text-slate-500 dark:text-slate-400">{i + 1}</span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <TypeBadge type={r.type} size="xs" />
                   {r.project_id && (
-                    <span className="rounded-md bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-400">{projectName[r.project_id] || "scoped"}</span>
+                    <span className="rounded-md bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-400">{projectName[r.project_id] || "scoped"}</span>
                   )}
                   <ScoreBar label="match" value={sim} tone="sky" />
                   <ScoreBar label="conf" value={Math.round((r.confidence ?? 0) * 100)} tone="emerald" />
                   <ScoreBar label="util" value={Math.round((r.utility ?? 0.5) * 100)} tone="violet" />
                 </div>
                 <p className="mt-1.5 text-sm font-medium text-slate-100">{r.title}</p>
-                <p className="mt-0.5 line-clamp-2 text-xs text-slate-500">{r.content}</p>
+                <p className="mt-0.5 line-clamp-2 text-xs text-slate-400 dark:text-slate-500">{r.content}</p>
               </div>
             </div>
-            <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.015] px-4 py-2">
+            <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/[0.06] bg-slate-50/60 dark:bg-white/[0.015] px-4 py-2">
               <FeedbackButtons key={r.id + ver} memory={r} />
-              <span className="font-mono text-[10px] text-slate-600">access {r.access_count ?? 0}</span>
+              <span className="font-mono text-[10px] text-slate-400 dark:text-slate-600">access {r.access_count ?? 0}</span>
             </div>
             <RelatedPanel key={"rel-" + r.id + ver} memory={r} projectName={projectName} />
           </div>
@@ -161,7 +161,7 @@ export default function Recall({ projects = [] }) {
       })}
 
       {data && results.length === 0 && (
-        <div className="card flex flex-col items-center gap-2 py-16 text-slate-600">
+        <div className="card flex flex-col items-center gap-2 py-16 text-slate-400 dark:text-slate-600">
           <BrainCircuit className="h-8 w-8" />
           <p className="text-sm">Tidak ada memori cocok. Coba kata kunci lain atau perluas filter.</p>
         </div>
@@ -171,12 +171,12 @@ export default function Recall({ projects = [] }) {
 }
 
 function ScoreBar({ label, value, tone }) {
-  const tones = { sky: "bg-sky-400 text-sky-300", emerald: "bg-emerald-400 text-emerald-300", violet: "bg-violet-400 text-violet-300" };
+  const tones = { sky: "bg-emerald-400 text-emerald-600 dark:text-emerald-300", emerald: "bg-emerald-400 text-emerald-600 dark:text-emerald-300", violet: "bg-violet-400 text-violet-600 dark:text-violet-300" };
   const [bar, text] = tones[tone].split(" ");
   return (
     <span className="inline-flex items-center gap-1">
-      <span className="font-mono text-[9px] text-slate-600">{label}</span>
-      <span className="relative h-1.5 w-10 overflow-hidden rounded-full bg-white/10">
+      <span className="font-mono text-[9px] text-slate-400 dark:text-slate-600">{label}</span>
+      <span className="relative h-1.5 w-10 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
         <span className={cn("absolute left-0 top-0 h-full rounded-full", bar)} style={{ width: `${Math.min(100, value)}%` }} />
       </span>
       <span className={cn("font-mono text-[10px]", text)}>{value}</span>

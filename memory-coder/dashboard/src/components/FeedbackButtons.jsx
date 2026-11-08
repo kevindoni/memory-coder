@@ -32,7 +32,7 @@ export default function FeedbackButtons({ memory }) {
         onClick={(e) => { e.stopPropagation(); vote(true); }}
         disabled={busy !== null}
         title="Tandai berguna (naikkan ranking)"
-        className={cn("btn btn-ghost !px-2 !py-1 text-xs", useful > 0 ? "text-emerald-300" : "text-slate-400")}
+        className={cn("btn btn-ghost !px-2 !py-1 text-xs", useful > 0 ? "text-emerald-600 dark:text-emerald-300" : "text-slate-500 dark:text-slate-400")}
       >
         {busy === true ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className="h-3.5 w-3.5" />}
         <span className="font-mono">{useful}</span>
@@ -41,12 +41,12 @@ export default function FeedbackButtons({ memory }) {
         onClick={(e) => { e.stopPropagation(); vote(false); }}
         disabled={busy !== null}
         title="Tandai tidak membantu (turunkan ranking)"
-        className={cn("btn btn-ghost !px-2 !py-1 text-xs", notUseful > 0 ? "text-rose-300" : "text-slate-400")}
+        className={cn("btn btn-ghost !px-2 !py-1 text-xs", notUseful > 0 ? "text-rose-600 dark:text-rose-300" : "text-slate-500 dark:text-slate-400")}
       >
         {busy === false ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsDown className="h-3.5 w-3.5" />}
         <span className="font-mono">{notUseful}</span>
       </button>
-      <span className={cn("ml-1 font-mono text-[10px]", net > 0 ? "text-emerald-400" : net < 0 ? "text-rose-400" : "text-slate-600")}>
+      <span className={cn("ml-1 font-mono text-[10px]", net > 0 ? "text-emerald-400" : net < 0 ? "text-rose-400" : "text-slate-400 dark:text-slate-600")}>
         {net > 0 ? `+${net}` : net}
       </span>
     </div>

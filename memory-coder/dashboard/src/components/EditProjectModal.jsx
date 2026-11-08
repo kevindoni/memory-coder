@@ -34,27 +34,27 @@ export default function EditProjectModal({ project, onClose, onSaved }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
       <div className="card w-full max-w-lg p-5" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Edit Project</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Edit Project</h3>
           <button onClick={onClose} className="btn btn-ghost !p-1.5"><X className="h-4 w-4" /></button>
         </div>
         <div className="space-y-3">
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-500">Nama</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Nama</label>
             <input value={name} onChange={(e) => setName(e.target.value)} className="input mt-1" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-500">Path</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Path</label>
             <input value={path} onChange={(e) => setPath(e.target.value)} className="input mt-1 font-mono text-xs" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-500">Tech stack (pisah koma)</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Tech stack (pisah koma)</label>
             <input value={tech} onChange={(e) => setTech(e.target.value)} className="input mt-1 font-mono text-xs" placeholder="React, Node.js, …" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-500">Deskripsi</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Deskripsi</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="input mt-1 text-xs" />
           </div>
-          {err && <div className="text-xs text-rose-300">{err}</div>}
+          {err && <div className="text-xs text-rose-600 dark:text-rose-300">{err}</div>}
         </div>
         <div className="mt-4 flex justify-end gap-2">
           <button onClick={onClose} className="btn btn-ghost !py-2 text-xs">Batal</button>

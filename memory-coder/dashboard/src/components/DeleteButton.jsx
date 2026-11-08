@@ -30,7 +30,7 @@ export default function DeleteButton({ onConfirm, title = "Hapus", compact = fal
         e.stopPropagation();
         setConfirming(true);
       }}
-      className={compact ? "btn btn-ghost !p-1.5 text-slate-500 hover:text-rose-300" : "btn btn-ghost !py-1 !px-2 text-slate-500 hover:text-rose-300"}
+      className={compact ? "btn btn-ghost !p-1.5 text-slate-400 dark:text-slate-500 hover:text-rose-600 hover:dark:text-rose-300" : "btn btn-ghost !py-1 !px-2 text-slate-400 dark:text-slate-500 hover:text-rose-600 hover:dark:text-rose-300"}
       title={title}
     >
       <Trash2 className="h-3.5 w-3.5" />

@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    color-scheme: light;
+  }
+  html.dark {
     color-scheme: dark;
   }
   html,
@@ -12,27 +15,63 @@
     height: 100%;
   }
   body {
-    @apply bg-slate-950 text-slate-200 antialiased;
+    @apply bg-slate-50 text-slate-800 antialiased;
     font-feature-settings: "cv11", "ss01";
+  }
+  html.dark body {
+    @apply bg-slate-950 text-slate-200;
   }
 }
 
 @layer components {
+  /* Surfaces */
   .card {
-    @apply rounded-2xl border border-white/[0.06] bg-white/[0.025] backdrop-blur-sm;
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm;
   }
+  html.dark .card {
+    @apply border-white/[0.06] bg-white/[0.025] shadow-none backdrop-blur-sm;
+  }
+
+  /* Buttons */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-emerald-600 text-white shadow-sm hover:bg-emerald-500 active:bg-emerald-600;
+  }
+  html.dark .btn-primary {
+    @apply bg-emerald-500 text-slate-950 hover:bg-emerald-400;
   }
   .btn-ghost {
+    @apply text-slate-500 hover:bg-slate-100 hover:text-slate-800;
+  }
+  html.dark .btn-ghost {
     @apply text-slate-400 hover:bg-white/5 hover:text-slate-200;
   }
   .btn-danger {
+    @apply text-rose-600 hover:bg-rose-500/10 hover:text-rose-700;
+  }
+  html.dark .btn-danger {
     @apply text-rose-300 hover:bg-rose-500/10 hover:text-rose-200;
   }
+
+  /* Inputs */
   .input {
-    @apply w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-sky-400/60 focus:ring-2 focus:ring-sky-500/20;
+    @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20;
   }
+  html.dark .input {
+    @apply border-white/10 bg-slate-900/60 text-slate-100 shadow-none placeholder:text-slate-500 focus:border-emerald-400/60;
+  }
+
+  /* Code/mono chips */
+  .chip {
+    @apply rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-500;
+  }
+  html.dark .chip {
+    @apply bg-white/5 text-slate-400;
+  }
+
+  /* Scrollbar */
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
@@ -42,9 +81,15 @@
     height: 8px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-slate-600/40;
+    @apply rounded-full bg-slate-300;
+  }
+  html.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-slate-600/40;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
+  html.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     @apply bg-slate-500/50;
   }
 }

@@ -10,11 +10,11 @@ function Distribution({ title, items, total, onSelect }) {
   return (
     <div className="card p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
-        <span className="font-mono text-xs text-slate-500">{total} total</span>
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200">{title}</h3>
+        <span className="font-mono text-xs text-slate-400 dark:text-slate-500">{total} total</span>
       </div>
       <div className="space-y-3">
-        {items.length === 0 && <p className="text-sm text-slate-600">Belum ada data.</p>}
+        {items.length === 0 && <p className="text-sm text-slate-400 dark:text-slate-600">Belum ada data.</p>}
         {items.map((item) => {
           const meta = TYPE_META[item.name] || TYPE_META.general;
           const pct = Math.round((item.count / max) * 100);
@@ -25,13 +25,13 @@ function Distribution({ title, items, total, onSelect }) {
               className="group block w-full text-left"
             >
               <div className="mb-1 flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1.5 capitalize text-slate-300">
+                <span className="flex items-center gap-1.5 capitalize text-slate-600 dark:text-slate-300">
                   <span className={cn("h-1.5 w-1.5 rounded-full", meta.dot)} />
                   {item.label || item.name}
                 </span>
-                <span className="font-mono text-slate-400">{item.count}</span>
+                <span className="font-mono text-slate-500 dark:text-slate-400">{item.count}</span>
               </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-white/5">
                 <div
                   className={cn("h-full rounded-full transition-all", meta.dot)}
                   style={{ width: `${pct}%` }}
@@ -71,27 +71,27 @@ export default function Overview({ stats, onOpenMemories }) {
 
       <div className="card p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-200">Aktivitas Terbaru</h3>
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Aktivitas Terbaru</h3>
           <button onClick={() => onOpenMemories({})} className="btn btn-ghost !py-1 text-xs">
             Lihat semua <ArrowUpRight className="h-3.5 w-3.5" />
           </button>
         </div>
         <div className="space-y-2">
           {recent.length === 0 && (
-            <div className="flex items-center gap-2 py-6 text-sm text-slate-600">
+            <div className="flex items-center gap-2 py-6 text-sm text-slate-400 dark:text-slate-600">
               <Inbox className="h-4 w-4" /> Belum ada memori tersimpan.
             </div>
           )}
           {recent.map((m) => (
-            <div key={m.id} className="flex items-start gap-3 rounded-lg border border-white/[0.04] bg-white/[0.015] px-3 py-2.5">
+            <div key={m.id} className="flex items-start gap-3 rounded-lg border border-slate-200/70 dark:border-white/[0.04] bg-slate-50/60 dark:bg-white/[0.015] px-3 py-2.5">
               <div className="mt-0.5 w-16 shrink-0">
                 <TypeBadge type={m.type} size="xs" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm text-slate-200">{m.title}</p>
-                <p className="truncate text-xs text-slate-500">{truncate(m.content, 90)}</p>
+                <p className="truncate text-sm text-slate-700 dark:text-slate-200">{m.title}</p>
+                <p className="truncate text-xs text-slate-400 dark:text-slate-500">{truncate(m.content, 90)}</p>
               </div>
-              <span className="shrink-0 font-mono text-[10px] text-slate-600">{timeAgo(m.created_at)}</span>
+              <span className="shrink-0 font-mono text-[10px] text-slate-400 dark:text-slate-600">{timeAgo(m.created_at)}</span>
             </div>
           ))}
         </div>
