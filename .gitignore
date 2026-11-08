@@ -23,6 +23,11 @@ memory-coder/scripts/consolidate-report-*.json
 memory-coder/scripts/.scheduler-state.json
 memory-coder/scripts/eval-trend.jsonl
 memory-coder/scripts/golden-qa.json
+memory-coder/scripts/golden-qa-paraphrase.json
+memory-coder/scripts/backfill-backup-*.json
+memory-coder/scripts/backfill-proposals-*.json
+memory-coder/scripts/consolidate-backup-*.json
+memory-coder/scripts/consolidate-report-*.json
 
 # Test / session artifacts
 .playwright-mcp/
