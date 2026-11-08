@@ -107,7 +107,7 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Memories</h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-500">
           {total} memori{activeProjectName ? ` · ${activeProjectName}` : ""}{applied.type ? ` · ${typeMeta(applied.type).label}` : ""}
         </p>
       </div>
@@ -115,7 +115,7 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
       {/* Filters */}
       <div className="card flex flex-wrap items-center gap-2 p-3">
         <div className="relative min-w-[220px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-500" />
           <input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Cari judul, isi, atau tag…" className="input !pl-9" />
           {searchText && (
             <button onClick={() => setSearchText("")} className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost !p-1">
@@ -147,11 +147,11 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
       {error ? (
         <div className="card p-6 text-sm text-rose-600 dark:text-rose-300">Gagal memuat: {error}</div>
       ) : loading ? (
-        <div className="flex items-center gap-2 py-12 text-slate-400 dark:text-slate-500">
+        <div className="flex items-center gap-2 py-12 text-slate-500 dark:text-slate-500">
           <Loader2 className="h-4 w-4 animate-spin" /> Memuat…
         </div>
       ) : memories.length === 0 ? (
-        <div className="card flex flex-col items-center gap-2 py-16 text-slate-400 dark:text-slate-600">
+        <div className="card flex flex-col items-center gap-2 py-16 text-slate-500 dark:text-slate-600">
           <Inbox className="h-8 w-8" />
           <p className="text-sm">Tidak ada memori cocok dengan filter.</p>
         </div>
@@ -177,10 +177,10 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
                           {projectName[m.project_id] || "scoped"}
                         </span>
                       )}
-                      <span className="font-mono text-[10px] text-slate-400 dark:text-slate-600">{timeAgo(m.created_at)}</span>
+                      <span className="font-mono text-[10px] text-slate-500 dark:text-slate-600">{timeAgo(m.created_at)}</span>
                     </div>
                     <p className="mt-1.5 truncate text-sm font-medium text-slate-100">{m.title}</p>
-                    <p className={cn("mt-0.5 whitespace-pre-wrap text-xs text-slate-400 dark:text-slate-500", !isOpen && "line-clamp-1")}>{m.content}</p>
+                    <p className={cn("mt-0.5 whitespace-pre-wrap text-xs text-slate-500 dark:text-slate-500", !isOpen && "line-clamp-1")}>{m.content}</p>
                     {isOpen && m.tags?.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {m.tags.map((t) => (
@@ -189,14 +189,14 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
                       </div>
                     )}
                   </div>
-                  <ChevronDown className={cn("mt-1 h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500 transition-transform", isOpen && "rotate-180")} />
+                  <ChevronDown className={cn("mt-1 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-500 transition-transform", isOpen && "rotate-180")} />
                 </div>
                 {isOpen && (
                   <>
                     <RelatedPanel memory={m} projectName={projectName} />
                     <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/[0.06] bg-slate-50/60 dark:bg-white/[0.015] px-4 py-2">
                       <FeedbackButtons memory={m} />
-                      <span className="font-mono text-[10px] text-slate-400 dark:text-slate-600">Dibuat {formatDate(m.created_at)}</span>
+                      <span className="font-mono text-[10px] text-slate-500 dark:text-slate-600">Dibuat {formatDate(m.created_at)}</span>
                       <DeleteButton onConfirm={() => handleDelete(m.id)} title="Hapus memori" />
                     </div>
                   </>
@@ -210,7 +210,7 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
       {/* Pagination */}
       {total > PAGE_SIZE && (
         <div className="flex items-center justify-between pt-2">
-          <span className="text-xs text-slate-400 dark:text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-500">
             Halaman {page + 1} dari {totalPages} · {total} total
           </span>
           <div className="flex items-center gap-1">

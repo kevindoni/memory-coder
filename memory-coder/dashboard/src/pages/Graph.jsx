@@ -30,17 +30,17 @@ export default function Graph({ projects = [] }) {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Graph</h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500">Hub entitas — jelajahi memori lewat tag. Klik entitas untuk lihat memori yang terhubung.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-500">Hub entitas — jelajahi memori lewat tag. Klik entitas untuk lihat memori yang terhubung.</p>
       </div>
 
       {loading ? (
-        <div className="flex items-center gap-2 py-8 text-slate-400 dark:text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Memuat…</div>
+        <div className="flex items-center gap-2 py-8 text-slate-500 dark:text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Memuat…</div>
       ) : (
         <>
           <div className="card p-4">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white"><Network className="h-4 w-4 text-emerald-600 dark:text-emerald-300" /> Entitas teratas (tag dengan ≥2 memori)</h3>
             <div className="flex flex-wrap gap-1.5">
-              {tagCount.length === 0 && <span className="text-xs text-slate-400 dark:text-slate-600">Belum ada tag.</span>}
+              {tagCount.length === 0 && <span className="text-xs text-slate-500 dark:text-slate-600">Belum ada tag.</span>}
               {tagCount.map(([tag, n]) => {
                 const size = Math.min(20, 11 + n);
                 return (
@@ -71,7 +71,7 @@ export default function Graph({ projects = [] }) {
                         <p className="truncate text-xs text-slate-700 dark:text-slate-200">{m.title}</p>
                         <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
                           <TypeBadge type={m.type} size="xs" />
-                          {m.project_id && projectName[m.project_id] && <span className="rounded bg-slate-100 dark:bg-white/5 px-1 py-0.5 font-mono text-[9px] text-slate-400 dark:text-slate-500">{projectName[m.project_id]}</span>}
+                          {m.project_id && projectName[m.project_id] && <span className="rounded bg-slate-100 dark:bg-white/5 px-1 py-0.5 font-mono text-[9px] text-slate-500 dark:text-slate-500">{projectName[m.project_id]}</span>}
                         </div>
                       </div>
                     </div>

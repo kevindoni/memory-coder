@@ -17,7 +17,7 @@ function StatCard({ icon: Icon, label, value, accent = "sky" }) {
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0">
-        <div className="truncate text-xs text-slate-400 dark:text-slate-500">{label}</div>
+        <div className="truncate text-xs text-slate-500 dark:text-slate-500">{label}</div>
         <div className="text-xl font-semibold text-slate-900 dark:text-white">{value}</div>
       </div>
     </div>
@@ -91,7 +91,7 @@ export default function SmartManager() {
           <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
             <Cpu className="h-5 w-5 text-emerald-600 dark:text-emerald-300" /> Smart Manager
           </h2>
-          <p className="text-sm text-slate-400 dark:text-slate-500">Auto-detect project, dedup real-time, conflict auto-resolve, importance tuning, expire stale.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500">Auto-detect project, dedup real-time, conflict auto-resolve, importance tuning, expire stale.</p>
         </div>
         <button onClick={load} disabled={loading} className="btn btn-ghost !py-1.5 text-xs">
           {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Refresh
@@ -127,7 +127,7 @@ export default function SmartManager() {
           <div className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-sm font-medium text-slate-600 dark:text-slate-300">Auto-expire stale memories</h3>
-              <p className="text-xs text-slate-400 dark:text-slate-500">Hapus memori lama, jarang diakses, importance rendah, tanpa feedback positif.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-500">Hapus memori lama, jarang diakses, importance rendah, tanpa feedback positif.</p>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => runExpire(false)} disabled={busy} className="btn btn-ghost !py-1.5 text-xs">
@@ -142,7 +142,7 @@ export default function SmartManager() {
           <div className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-300"><FolderSymlink className="h-4 w-4 text-violet-600 dark:text-violet-300" /> Auto-scope unscoped memories</h3>
-              <p className="text-xs text-slate-400 dark:text-slate-500">Petakan memori tanpa project ke project terdaftar berdasarkan nama/path di konten.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-500">Petakan memori tanpa project ke project terdaftar berdasarkan nama/path di konten.</p>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => runScope(false)} disabled={busy} className="btn btn-ghost !py-1.5 text-xs">

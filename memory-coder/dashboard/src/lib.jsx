@@ -17,11 +17,11 @@ import {
 } from "lucide-react";
 
 export const TYPE_META = {
-  bug: { label: "Bug", icon: Bug, color: "text-rose-600 dark:text-rose-300", bg: "bg-rose-500/10", ring: "ring-rose-500/20", dot: "bg-rose-400" },
-  decision: { label: "Decision", icon: Lightbulb, color: "text-amber-600 dark:text-amber-300", bg: "bg-amber-500/10", ring: "ring-amber-500/20", dot: "bg-amber-400" },
-  pattern: { label: "Pattern", icon: Boxes, color: "text-emerald-600 dark:text-emerald-300", bg: "bg-emerald-500/10", ring: "ring-emerald-500/20", dot: "bg-emerald-400" },
-  learning: { label: "Learning", icon: Sparkles, color: "text-violet-600 dark:text-violet-300", bg: "bg-violet-500/10", ring: "ring-violet-500/20", dot: "bg-violet-400" },
-  general: { label: "General", icon: FileText, color: "text-emerald-600 dark:text-emerald-300", bg: "bg-emerald-500/10", ring: "ring-emerald-500/20", dot: "bg-emerald-400" }
+  bug: { label: "Bug", icon: Bug, color: "text-rose-700 dark:text-rose-300", bg: "bg-rose-500/10", ring: "ring-rose-500/20", dot: "bg-rose-400" },
+  decision: { label: "Decision", icon: Lightbulb, color: "text-amber-700 dark:text-amber-300", bg: "bg-amber-500/10", ring: "ring-amber-500/20", dot: "bg-amber-400" },
+  pattern: { label: "Pattern", icon: Boxes, color: "text-emerald-700 dark:text-emerald-300", bg: "bg-emerald-500/10", ring: "ring-emerald-500/20", dot: "bg-emerald-400" },
+  learning: { label: "Learning", icon: Sparkles, color: "text-violet-700 dark:text-violet-300", bg: "bg-violet-500/10", ring: "ring-violet-500/20", dot: "bg-violet-400" },
+  general: { label: "General", icon: FileText, color: "text-emerald-700 dark:text-emerald-300", bg: "bg-emerald-500/10", ring: "ring-emerald-500/20", dot: "bg-emerald-400" }
 };
 
 export const ALL_TYPES = ["bug", "decision", "pattern", "learning", "general"];
@@ -60,16 +60,16 @@ export function cn(...parts) {
 }
 
 export const LOG_ACTION_META = {
-  memory_created: { label: "Memori dibuat", icon: PlusCircle, color: "text-emerald-600 dark:text-emerald-300", dot: "bg-emerald-400" },
-  memory_deleted: { label: "Memori dihapus", icon: Trash2, color: "text-rose-600 dark:text-rose-300", dot: "bg-rose-400" },
-  bug_logged: { label: "Bug dicatat", icon: Bug, color: "text-rose-600 dark:text-rose-300", dot: "bg-rose-400" },
-  project_created: { label: "Project dibuat", icon: FolderPlus, color: "text-emerald-600 dark:text-emerald-300", dot: "bg-emerald-400" },
-  project_deleted: { label: "Project dihapus", icon: FolderMinus, color: "text-rose-600 dark:text-rose-300", dot: "bg-rose-400" },
-  git_indexed: { label: "Index Git", icon: GitBranch, color: "text-violet-600 dark:text-violet-300", dot: "bg-violet-400" },
-  index_run: { label: "Auto-index", icon: RefreshCw, color: "text-amber-600 dark:text-amber-300", dot: "bg-amber-400" },
-  ai_ask: { label: "Ask AI", icon: Sparkles, color: "text-emerald-600 dark:text-emerald-300", dot: "bg-emerald-400" },
-  ai_summarized: { label: "Smart Summary", icon: Sparkles, color: "text-violet-600 dark:text-violet-300", dot: "bg-violet-400" },
-  conversation_captured: { label: "Capture Chat", icon: FileText, color: "text-emerald-600 dark:text-emerald-300", dot: "bg-emerald-400" }
+  memory_created: { label: "Memori dibuat", icon: PlusCircle, color: "text-emerald-700 dark:text-emerald-300", dot: "bg-emerald-400" },
+  memory_deleted: { label: "Memori dihapus", icon: Trash2, color: "text-rose-700 dark:text-rose-300", dot: "bg-rose-400" },
+  bug_logged: { label: "Bug dicatat", icon: Bug, color: "text-rose-700 dark:text-rose-300", dot: "bg-rose-400" },
+  project_created: { label: "Project dibuat", icon: FolderPlus, color: "text-emerald-700 dark:text-emerald-300", dot: "bg-emerald-400" },
+  project_deleted: { label: "Project dihapus", icon: FolderMinus, color: "text-rose-700 dark:text-rose-300", dot: "bg-rose-400" },
+  git_indexed: { label: "Index Git", icon: GitBranch, color: "text-violet-700 dark:text-violet-300", dot: "bg-violet-400" },
+  index_run: { label: "Auto-index", icon: RefreshCw, color: "text-amber-700 dark:text-amber-300", dot: "bg-amber-400" },
+  ai_ask: { label: "Ask AI", icon: Sparkles, color: "text-emerald-700 dark:text-emerald-300", dot: "bg-emerald-400" },
+  ai_summarized: { label: "Smart Summary", icon: Sparkles, color: "text-violet-700 dark:text-violet-300", dot: "bg-violet-400" },
+  conversation_captured: { label: "Capture Chat", icon: FileText, color: "text-emerald-700 dark:text-emerald-300", dot: "bg-emerald-400" }
 };
 
 export const ALL_LOG_ACTIONS = Object.keys(LOG_ACTION_META);

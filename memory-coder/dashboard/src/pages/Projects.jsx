@@ -65,7 +65,7 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
   if (error) return <div className="card p-6 text-sm text-rose-600 dark:text-rose-300">Gagal memuat: {error}</div>;
   if (projects === null)
     return (
-      <div className="flex items-center gap-2 py-12 text-slate-400 dark:text-slate-500">
+      <div className="flex items-center gap-2 py-12 text-slate-500 dark:text-slate-500">
         <Loader2 className="h-4 w-4 animate-spin" /> Memuat projects…
       </div>
     );
@@ -75,7 +75,7 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Projects</h2>
-          <p className="text-sm text-slate-400 dark:text-slate-500">{projects.length} project terdaftar di memori</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500">{projects.length} project terdaftar di memori</p>
         </div>
       </div>
 
@@ -89,15 +89,15 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white">{p.name}</h3>
-                  <span className="font-mono text-[10px] text-slate-400 dark:text-slate-500">{timeAgo(p.last_active)}</span>
+                  <span className="font-mono text-[10px] text-slate-500 dark:text-slate-500">{timeAgo(p.last_active)}</span>
                 </div>
               </div>
               <DeleteButton title="Hapus project + memori" onConfirm={() => handleDelete(p.id, p.name)} />
             </div>
 
-            <p className="mt-3 line-clamp-2 text-xs text-slate-400 dark:text-slate-500">{p.description || "Tanpa deskripsi"}</p>
+            <p className="mt-3 line-clamp-2 text-xs text-slate-500 dark:text-slate-500">{p.description || "Tanpa deskripsi"}</p>
 
-            <div className="mt-3 flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-600">
+            <div className="mt-3 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-600">
               <MapPin className="h-3 w-3 shrink-0" />
               <span className="truncate font-mono">{p.path}</span>
             </div>
@@ -107,7 +107,7 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
                 <span key={t} className="rounded-md bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-400">{t}</span>
               ))}
               {p.tech_stack?.length > 4 && (
-                <span className="rounded-md bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-400 dark:text-slate-500">+{p.tech_stack.length - 4}</span>
+                <span className="rounded-md bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-500">+{p.tech_stack.length - 4}</span>
               )}
             </div>
 

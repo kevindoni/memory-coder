@@ -113,7 +113,7 @@ export default function AddMemoryModal({ open, onClose, projects = [], onSaved }
 
           {/* Title */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">Judul <span className="text-slate-400 dark:text-slate-600">(opsional)</span></label>
+            <label className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">Judul <span className="text-slate-500 dark:text-slate-600">(opsional)</span></label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -137,9 +137,9 @@ export default function AddMemoryModal({ open, onClose, projects = [], onSaved }
 
           {/* Tags */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">Tag <span className="text-slate-400 dark:text-slate-600">(pisahkan dengan koma)</span></label>
+            <label className="mb-1.5 block text-xs font-medium text-slate-500 dark:text-slate-400">Tag <span className="text-slate-500 dark:text-slate-600">(pisahkan dengan koma)</span></label>
             <div className="relative">
-              <Tag className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+              <Tag className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500 dark:text-slate-500" />
               <input
                 value={tagsText}
                 onChange={(e) => setTagsText(e.target.value)}

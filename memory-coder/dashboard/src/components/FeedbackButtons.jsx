@@ -46,7 +46,7 @@ export default function FeedbackButtons({ memory }) {
         {busy === false ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsDown className="h-3.5 w-3.5" />}
         <span className="font-mono">{notUseful}</span>
       </button>
-      <span className={cn("ml-1 font-mono text-[10px]", net > 0 ? "text-emerald-400" : net < 0 ? "text-rose-400" : "text-slate-400 dark:text-slate-600")}>
+      <span className={cn("ml-1 font-mono text-[10px]", net > 0 ? "text-emerald-400" : net < 0 ? "text-rose-400" : "text-slate-500 dark:text-slate-600")}>
         {net > 0 ? `+${net}` : net}
       </span>
     </div>

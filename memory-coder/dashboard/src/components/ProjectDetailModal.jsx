@@ -31,8 +31,8 @@ export default function ProjectDetailModal({ project, onClose }) {
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{project.name}</h3>
-            <p className="text-xs text-slate-400 dark:text-slate-500">{project.description || "Tanpa deskripsi"}</p>
-            <div className="mt-1 font-mono text-[10px] text-slate-400 dark:text-slate-600">{project.path}</div>
+            <p className="text-xs text-slate-500 dark:text-slate-500">{project.description || "Tanpa deskripsi"}</p>
+            <div className="mt-1 font-mono text-[10px] text-slate-500 dark:text-slate-600">{project.path}</div>
           </div>
           <button onClick={onClose} className="btn btn-ghost !p-1.5"><X className="h-4 w-4" /></button>
         </div>
@@ -69,9 +69,9 @@ export default function ProjectDetailModal({ project, onClose }) {
         <div className="mt-4">
           <h4 className="mb-2 flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300"><GitCompare className="h-3.5 w-3.5 text-violet-600 dark:text-violet-300" /> Pola dari project lain</h4>
           {loadingSug ? (
-            <div className="flex items-center gap-2 py-2 text-xs text-slate-400 dark:text-slate-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Memuat…</div>
+            <div className="flex items-center gap-2 py-2 text-xs text-slate-500 dark:text-slate-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Memuat…</div>
           ) : (sug?.suggestions || []).length === 0 ? (
-            <p className="text-[11px] text-slate-400 dark:text-slate-600">Tidak ada pola lintas-project yang berbagi tag/tech.</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-600">Tidak ada pola lintas-project yang berbagi tag/tech.</p>
           ) : (
             <div className="space-y-1">
               {(sug?.suggestions || []).slice(0, 5).map((s) => (
@@ -79,9 +79,9 @@ export default function ProjectDetailModal({ project, onClose }) {
                   <div className="flex items-center gap-1.5">
                     <TypeBadge type={s.type} size="xs" />
                     <span className="min-w-0 flex-1 truncate text-xs text-slate-700 dark:text-slate-200">{s.title}</span>
-                    <span className="font-mono text-[10px] text-slate-400 dark:text-slate-500">← {s.from_project || "?"}</span>
+                    <span className="font-mono text-[10px] text-slate-500 dark:text-slate-500">← {s.from_project || "?"}</span>
                   </div>
-                  <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-400 dark:text-slate-500">{truncate(s.content, 120)}</p>
+                  <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-500 dark:text-slate-500">{truncate(s.content, 120)}</p>
                 </div>
               ))}
             </div>

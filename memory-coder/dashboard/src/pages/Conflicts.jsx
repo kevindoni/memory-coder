@@ -45,7 +45,7 @@ export default function Conflicts() {
           {[pair.a, pair.b].map((side, i) => (
             <div key={side.id} className="rounded-md bg-slate-50 dark:bg-white/[0.02] p-2.5">
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[10px] text-slate-400 dark:text-slate-600">{i === 0 ? "A" : "B"}</span>
+                <span className="font-mono text-[10px] text-slate-500 dark:text-slate-600">{i === 0 ? "A" : "B"}</span>
                 <span className="min-w-0 flex-1 truncate text-xs text-slate-700 dark:text-slate-200">{side.title}</span>
               </div>
             </div>
@@ -74,13 +74,13 @@ export default function Conflicts() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Conflicts</h2>
-          <p className="text-sm text-slate-400 dark:text-slate-500">Antre resolve duplikat & decision konflik (Jaccard token, sampel {data?.scanned ?? "…"} memori).</p>
+          <p className="text-sm text-slate-500 dark:text-slate-500">Antre resolve duplikat & decision konflik (Jaccard token, sampel {data?.scanned ?? "…"} memori).</p>
         </div>
         <button onClick={load} className="btn btn-ghost !py-1.5 text-xs"><GitCompare className="h-3.5 w-3.5" /> Scan ulang</button>
       </div>
 
       {error && <div className="card p-4 text-sm text-rose-600 dark:text-rose-300">Gagal: {error}</div>}
-      {loading && <div className="flex items-center gap-2 py-8 text-slate-400 dark:text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Memindai…</div>}
+      {loading && <div className="flex items-center gap-2 py-8 text-slate-500 dark:text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Memindai…</div>}
 
       {data && (
         <>
@@ -97,7 +97,7 @@ export default function Conflicts() {
             </div>
           )}
           {dups.length === 0 && confs.length === 0 && !loading && (
-            <div className="card flex flex-col items-center gap-2 py-16 text-slate-400 dark:text-slate-600">
+            <div className="card flex flex-col items-center gap-2 py-16 text-slate-500 dark:text-slate-600">
               <Check className="h-8 w-8 text-emerald-400" />
               <p className="text-sm">Bersih — tidak ada duplikat/konflik pada sampel.</p>
             </div>

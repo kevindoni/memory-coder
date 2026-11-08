@@ -96,7 +96,7 @@ export default function Ask({ projects = [], signal = 0 }) {
             </div>
             <div>
               <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Ask AI — Tanya ke Memori</h3>
-              <p className="mt-1 max-w-sm text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-1 max-w-sm text-xs text-slate-500 dark:text-slate-500">
                 Tanya apa saja tentang project kamu. AI cari memori relevan lalu menjawab dengan referensi sumber.
               </p>
             </div>
@@ -122,7 +122,7 @@ export default function Ask({ projects = [], signal = 0 }) {
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 ring-1 ring-inset ring-emerald-500/20">
               <Loader2 className="h-4 w-4 animate-spin text-emerald-600 dark:text-emerald-300" />
             </div>
-            <div className="card px-4 py-3 text-xs text-slate-400 dark:text-slate-500">AI sedang mencari memori & menyusun jawaban…</div>
+            <div className="card px-4 py-3 text-xs text-slate-500 dark:text-slate-500">AI sedang mencari memori & menyusun jawaban…</div>
           </div>
         )}
       </div>
@@ -185,7 +185,7 @@ function MessageBubble({ msg }) {
             {msg.sources.slice(0, 5).map((s, i) => (
               <span
                 key={s.id}
-                className="inline-flex items-center gap-1 rounded-md bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-slate-400 dark:text-slate-500"
+                className="inline-flex items-center gap-1 rounded-md bg-white/[0.03] px-1.5 py-0.5 text-[10px] text-slate-500 dark:text-slate-500"
                 title={`${s.title} (${Math.round(s.similarity * 100)}%)`}
               >
                 <FileText className="h-2.5 w-2.5" />

@@ -94,11 +94,11 @@ export default function App() {
             <TitleIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-300" />
             <h1 className="text-base font-semibold text-slate-900 dark:text-white">{TITLES[view].label}</h1>
           </div>
-          <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
+          <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-500">
             <span className="hidden items-center gap-1.5 sm:flex">
               <span className="font-mono">POST</span> /v1/admin/*
             </span>
-            <span className="font-mono text-slate-400 dark:text-slate-600">v1.0.0</span>
+            <span className="font-mono text-slate-500 dark:text-slate-600">v1.0.0</span>
           </div>
           <button
             onClick={() => setShowAddModal(true)}

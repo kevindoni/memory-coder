@@ -87,13 +87,13 @@ export default function Logs({ projects = [], signal = 0 }) {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Activity Log</h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500">{total} aktivitas tercatat di sistem</p>
+        <p className="text-sm text-slate-500 dark:text-slate-500">{total} aktivitas tercatat di sistem</p>
       </div>
 
       {/* Filters */}
       <div className="card flex flex-wrap items-center gap-2 p-3">
         <div className="relative min-w-[200px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-500" />
           <input value={searchText} onChange={(e) => setSearchText(e.target.value)} placeholder="Cari aktivitas…" className="input !pl-9" />
           {searchText && (
             <button onClick={() => setSearchText("")} className="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost !p-1">
@@ -131,11 +131,11 @@ export default function Logs({ projects = [], signal = 0 }) {
       {error ? (
         <div className="card p-6 text-sm text-rose-600 dark:text-rose-300">Gagal memuat: {error}</div>
       ) : loading ? (
-        <div className="flex items-center gap-2 py-12 text-slate-400 dark:text-slate-500">
+        <div className="flex items-center gap-2 py-12 text-slate-500 dark:text-slate-500">
           <Loader2 className="h-4 w-4 animate-spin" /> Memuat log…
         </div>
       ) : logs.length === 0 ? (
-        <div className="card flex flex-col items-center gap-2 py-16 text-slate-400 dark:text-slate-600">
+        <div className="card flex flex-col items-center gap-2 py-16 text-slate-500 dark:text-slate-600">
           <Inbox className="h-8 w-8" />
           <p className="text-sm">Belum ada aktivitas tercatat.</p>
         </div>
@@ -164,7 +164,7 @@ export default function Logs({ projects = [], signal = 0 }) {
                     {proj && (
                       <span className="rounded-md bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-600 dark:text-emerald-300">{proj}</span>
                     )}
-                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] text-slate-400 dark:text-slate-600">
+                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] text-slate-500 dark:text-slate-600">
                       <Clock className="h-3 w-3" />
                       {formatDate(log.created_at)}
                     </span>
@@ -173,7 +173,7 @@ export default function Logs({ projects = [], signal = 0 }) {
                   {log.metadata && Object.keys(log.metadata).length > 0 && (
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {Object.entries(log.metadata).slice(0, 6).map(([k, v]) => (
-                        <span key={k} className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-400 dark:text-slate-500">
+                        <span key={k} className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-500">
                           {k}: {String(v)}
                         </span>
                       ))}
@@ -189,7 +189,7 @@ export default function Logs({ projects = [], signal = 0 }) {
       {/* Pagination */}
       {total > PAGE_SIZE && (
         <div className="flex items-center justify-between pt-2">
-          <span className="text-xs text-slate-400 dark:text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-500">
             Halaman {page + 1} dari {totalPages} · {total} total
           </span>
           <div className="flex items-center gap-1">

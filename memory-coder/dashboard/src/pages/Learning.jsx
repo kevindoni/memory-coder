@@ -67,7 +67,7 @@ export default function Learning({ projects = [] }) {
         <span className={cn("mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full", meta.dot)} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-xs text-slate-700 dark:text-slate-200">{m.title}</p>
-          <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-400 dark:text-slate-500">{m.content}</p>
+          <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-500 dark:text-slate-500">{m.content}</p>
         </div>
         <span className={cn("shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px]", mode === "up" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300" : "bg-rose-500/10 text-rose-600 dark:text-rose-300")}>
           {mode === "up" ? `👍 ${m.useful_count}` : `👎 ${m.not_useful_count}`}
@@ -80,7 +80,7 @@ export default function Learning({ projects = [] }) {
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Learning</h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-500">
           Insight dari loop feedback + transfer pengetahuan lintas-project. Memori yang ditandai berguna naik di recall; yang tidak membantu turun.
         </p>
       </div>
@@ -91,14 +91,14 @@ export default function Learning({ projects = [] }) {
           <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white">
             <TrendingUp className="h-4 w-4 text-emerald-600 dark:text-emerald-300" /> Sinyal feedback
           </h3>
-          <span className="font-mono text-[10px] text-slate-400 dark:text-slate-500">
+          <span className="font-mono text-[10px] text-slate-500 dark:text-slate-500">
             {loading ? "…" : `${withFeedback}/${sample.length} memori (sampel 200 terbaru)`}
           </span>
         </div>
         {errSample ? (
           <div className="py-3 text-xs text-rose-600 dark:text-rose-300">Gagal: {errSample}</div>
         ) : loading ? (
-          <div className="flex items-center gap-2 py-3 text-xs text-slate-400 dark:text-slate-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Memuat…</div>
+          <div className="flex items-center gap-2 py-3 text-xs text-slate-500 dark:text-slate-500"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Memuat…</div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             <div>
@@ -132,7 +132,7 @@ export default function Learning({ projects = [] }) {
         {errSug && <div className="py-2 text-xs text-rose-600 dark:text-rose-300">Gagal: {errSug}</div>}
         {sug && (
           <div className="space-y-2">
-            <p className="text-xs text-slate-400 dark:text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-500">
               {sug.suggestions?.length || 0} pola/decision dari project lain yang berbagi tech stack/tag dengan <span className="text-slate-600 dark:text-slate-300">{sug.project}</span>.
             </p>
             {sug.suggestions?.length ? (
@@ -144,11 +144,11 @@ export default function Learning({ projects = [] }) {
                       <span className={cn("h-1.5 w-1.5 rounded-full", meta.dot)} />
                       <TypeBadge type={s.type} size="xs" />
                       <span className="text-xs font-medium text-slate-700 dark:text-slate-200">{s.title}</span>
-                      <span className="ml-auto flex items-center gap-1 font-mono text-[10px] text-slate-400 dark:text-slate-500">
+                      <span className="ml-auto flex items-center gap-1 font-mono text-[10px] text-slate-500 dark:text-slate-500">
                         <ArrowRight className="h-3 w-3" /> {s.from_project || "?"}
                       </span>
                     </div>
-                    <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">{truncate(s.content, 220)}</p>
+                    <p className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-500">{truncate(s.content, 220)}</p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                       {s.shared_tags?.map((t) => (
                         <span key={t} className="rounded bg-violet-500/10 px-1 py-0.5 font-mono text-[9px] text-violet-600 dark:text-violet-300">#{t}</span>
@@ -169,5 +169,5 @@ export default function Learning({ projects = [] }) {
 }
 
 function Empty({ hint }) {
-  return <div className="rounded-lg border border-dashed border-slate-200 dark:border-white/[0.06] px-3 py-4 text-center text-[11px] text-slate-400 dark:text-slate-600">{hint}</div>;
+  return <div className="rounded-lg border border-dashed border-slate-200 dark:border-white/[0.06] px-3 py-4 text-center text-[11px] text-slate-500 dark:text-slate-600">{hint}</div>;
 }

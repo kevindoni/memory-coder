@@ -39,19 +39,19 @@ export default function EditProjectModal({ project, onClose, onSaved }) {
         </div>
         <div className="space-y-3">
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Nama</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-500">Nama</label>
             <input value={name} onChange={(e) => setName(e.target.value)} className="input mt-1" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Path</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-500">Path</label>
             <input value={path} onChange={(e) => setPath(e.target.value)} className="input mt-1 font-mono text-xs" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Tech stack (pisah koma)</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-500">Tech stack (pisah koma)</label>
             <input value={tech} onChange={(e) => setTech(e.target.value)} className="input mt-1 font-mono text-xs" placeholder="React, Node.js, …" />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">Deskripsi</label>
+            <label className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-500">Deskripsi</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="input mt-1 text-xs" />
           </div>
           {err && <div className="text-xs text-rose-600 dark:text-rose-300">{err}</div>}

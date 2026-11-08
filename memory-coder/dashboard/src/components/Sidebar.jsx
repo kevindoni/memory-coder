@@ -26,7 +26,7 @@ export default function Sidebar({ view, onView, health, stats, onRefresh, refres
         </div>
         <div className="leading-tight">
           <div className="text-sm font-semibold text-slate-900 dark:text-white">Memory Coder</div>
-          <div className="text-[11px] text-slate-400 dark:text-slate-500">Monitoring Dashboard</div>
+          <div className="text-[11px] text-slate-500 dark:text-slate-500">Monitoring Dashboard</div>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ export default function Sidebar({ view, onView, health, stats, onRefresh, refres
                 active ? "bg-emerald-500/10 dark:bg-white/[0.07] text-slate-900 dark:text-white" : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-white/5 hover:text-slate-700 hover:dark:text-slate-200"
               )}
             >
-              <Icon className={cn("h-4 w-4", active ? "text-emerald-600 dark:text-emerald-300" : "text-slate-400 dark:text-slate-500 group-hover:text-slate-600 group-hover:dark:text-slate-300")} />
+              <Icon className={cn("h-4 w-4", active ? "text-emerald-600 dark:text-emerald-300" : "text-slate-500 dark:text-slate-500 group-hover:text-slate-600 group-hover:dark:text-slate-300")} />
               {item.label}
               {item.id === "memories" && stats?.memoryCount != null && (
                 <span className="ml-auto rounded-md bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:text-slate-400">{stats.memoryCount}</span>
@@ -65,7 +65,7 @@ export default function Sidebar({ view, onView, health, stats, onRefresh, refres
             </span>
             <div className="leading-tight">
               <div className="text-xs font-medium text-slate-600 dark:text-slate-300">{online ? "Bridge online" : "Bridge offline"}</div>
-              <div className="font-mono text-[10px] text-slate-400 dark:text-slate-500">:3333</div>
+              <div className="font-mono text-[10px] text-slate-500 dark:text-slate-500">:3333</div>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -77,7 +77,7 @@ export default function Sidebar({ view, onView, health, stats, onRefresh, refres
             </button>
           </div>
         </div>
-        <div className="mt-2 flex items-center gap-1.5 px-1 text-[10px] text-slate-400 dark:text-slate-600">
+        <div className="mt-2 flex items-center gap-1.5 px-1 text-[10px] text-slate-500 dark:text-slate-600">
           <Activity className="h-3 w-3" />
           <span>Local • PM2 managed</span>
         </div>

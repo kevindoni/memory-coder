@@ -57,7 +57,7 @@ export default function Recall({ projects = [] }) {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Recall</h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-500">
           Cari memori secara semantik — uji sendiri ingatan & kepintaran sistem. Hasil diurutkan similarity + utility.
         </p>
       </div>
@@ -65,7 +65,7 @@ export default function Recall({ projects = [] }) {
       {/* Search bar */}
       <form onSubmit={run} className="card flex flex-wrap items-center gap-2 p-3">
         <div className="relative min-w-[260px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-500" />
           <input
             autoFocus
             value={query}
@@ -91,7 +91,7 @@ export default function Recall({ projects = [] }) {
             <option key={t} value={t}>{typeMeta(t).label}</option>
           ))}
         </select>
-        <div className="flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
+        <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-500">
           <Sliders className="h-3.5 w-3.5" />
           <select value={limit} onChange={(e) => setLimit(Number(e.target.value))} className="input !w-auto !py-1.5 text-xs">
             {[5, 8, 12, 20].map((n) => (
@@ -107,7 +107,7 @@ export default function Recall({ projects = [] }) {
       {/* Examples */}
       {!data && !loading && (
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs text-slate-400 dark:text-slate-600">Contoh:</span>
+          <span className="text-xs text-slate-500 dark:text-slate-600">Contoh:</span>
           {EXAMPLES.map((ex) => (
             <button key={ex} onClick={(e) => run(e, ex)} className="rounded-md bg-slate-100 dark:bg-white/5 px-2 py-1 text-[11px] text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-white/10 hover:text-slate-700 hover:dark:text-slate-200">
               {ex}
@@ -121,7 +121,7 @@ export default function Recall({ projects = [] }) {
 
       {/* Meta */}
       {data && (
-        <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
+        <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500 dark:text-slate-500">
           <span>{results.length} hasil</span>
           <span className="font-mono">mode: {data.mode}</span>
           {data.reranked && <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-emerald-600 dark:text-emerald-300">reranked</span>}
@@ -148,12 +148,12 @@ export default function Recall({ projects = [] }) {
                   <ScoreBar label="util" value={Math.round((r.utility ?? 0.5) * 100)} tone="violet" />
                 </div>
                 <p className="mt-1.5 text-sm font-medium text-slate-100">{r.title}</p>
-                <p className="mt-0.5 line-clamp-2 text-xs text-slate-400 dark:text-slate-500">{r.content}</p>
+                <p className="mt-0.5 line-clamp-2 text-xs text-slate-500 dark:text-slate-500">{r.content}</p>
               </div>
             </div>
             <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/[0.06] bg-slate-50/60 dark:bg-white/[0.015] px-4 py-2">
               <FeedbackButtons key={r.id + ver} memory={r} />
-              <span className="font-mono text-[10px] text-slate-400 dark:text-slate-600">access {r.access_count ?? 0}</span>
+              <span className="font-mono text-[10px] text-slate-500 dark:text-slate-600">access {r.access_count ?? 0}</span>
             </div>
             <RelatedPanel key={"rel-" + r.id + ver} memory={r} projectName={projectName} />
           </div>
@@ -161,7 +161,7 @@ export default function Recall({ projects = [] }) {
       })}
 
       {data && results.length === 0 && (
-        <div className="card flex flex-col items-center gap-2 py-16 text-slate-400 dark:text-slate-600">
+        <div className="card flex flex-col items-center gap-2 py-16 text-slate-500 dark:text-slate-600">
           <BrainCircuit className="h-8 w-8" />
           <p className="text-sm">Tidak ada memori cocok. Coba kata kunci lain atau perluas filter.</p>
         </div>
@@ -175,7 +175,7 @@ function ScoreBar({ label, value, tone }) {
   const [bar, text] = tones[tone].split(" ");
   return (
     <span className="inline-flex items-center gap-1">
-      <span className="font-mono text-[9px] text-slate-400 dark:text-slate-600">{label}</span>
+      <span className="font-mono text-[9px] text-slate-500 dark:text-slate-600">{label}</span>
       <span className="relative h-1.5 w-10 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
         <span className={cn("absolute left-0 top-0 h-full rounded-full", bar)} style={{ width: `${Math.min(100, value)}%` }} />
       </span>

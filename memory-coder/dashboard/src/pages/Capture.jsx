@@ -95,7 +95,7 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Capture Conversation</h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-500">
           Drop file atau tempel percakapan — AI ekstrak memori otomatis.
         </p>
       </div>
@@ -142,12 +142,12 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
         {uploading ? (
           <Loader2 className="h-6 w-6 animate-spin text-emerald-600 dark:text-emerald-300" />
         ) : (
-          <UploadCloud className={cn("h-6 w-6", dragOver ? "text-emerald-600 dark:text-emerald-300" : "text-slate-400 dark:text-slate-500")} />
+          <UploadCloud className={cn("h-6 w-6", dragOver ? "text-emerald-600 dark:text-emerald-300" : "text-slate-500 dark:text-slate-500")} />
         )}
         <p className="text-sm text-slate-500 dark:text-slate-400">
           {uploading ? "Uploading..." : dragOver ? "Drop file di sini" : "Drag & drop file .txt / .md atau klik untuk browse"}
         </p>
-        <p className="text-[11px] text-slate-400 dark:text-slate-600">
+        <p className="text-[11px] text-slate-500 dark:text-slate-600">
           File auto-diproses oleh file watcher → AI ekstrak memori
         </p>
         <input
@@ -175,7 +175,7 @@ export default function Capture({ projects = [], onNeedsRefresh }) {
             <Trash2 className="h-3.5 w-3.5" /> Bersihkan
           </button>
         )}
-        <span className="ml-auto font-mono text-[10px] text-slate-400 dark:text-slate-600">{conversation.length} karakter</span>
+        <span className="ml-auto font-mono text-[10px] text-slate-500 dark:text-slate-600">{conversation.length} karakter</span>
       </div>
 
       {/* Textarea */}

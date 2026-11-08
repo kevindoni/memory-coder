@@ -52,7 +52,7 @@ export default function Settings({ stats }) {
     <div className="space-y-5">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Settings</h2>
-        <p className="text-sm text-slate-400 dark:text-slate-500">Status engine, re-embed, dan kesehatan data memori.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-500">Status engine, re-embed, dan kesehatan data memori.</p>
       </div>
 
       {/* Embedding engine */}
@@ -65,7 +65,7 @@ export default function Settings({ stats }) {
 
         {/* API Key Section */}
         <div className="mt-4 border-t border-slate-200 dark:border-white/[0.06] pt-4">
-          <label className="mb-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+          <label className="mb-1.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-500">
             <KeyRound className="h-3.5 w-3.5" /> API Key (X-API-Key)
           </label>
           <div className="flex gap-2">
@@ -85,7 +85,7 @@ export default function Settings({ stats }) {
           </div>
         </div>
 
-        <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">
+        <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-500">
           {embed?.model?.includes("multilingual")
             ? "✓ Multilingual aktif ( recall Indonesia sudah optimal)."
             : "⚠ Model monolingual — ganti ke Xenova/paraphrase-multilingual-MiniLM-L12-v2 (env EMBEDDING_MODEL) lalu re-embed untuk akurasi Indonesia."}
@@ -105,7 +105,7 @@ export default function Settings({ stats }) {
       {/* Scheduler info */}
       <div className="card p-4">
         <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white"><Clock className="h-4 w-4 text-amber-600 dark:text-amber-300" /> Scheduler (PM2: memory-coder-scheduler)</h3>
-        <p className="text-xs text-slate-400 dark:text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-500">
           Eval harian jam 03:00 lokal (metric parafrasa) · Consolidate mingguan (Minggu 04:00, dry-run). Atur via <span className="font-mono">ecosystem.config.cjs</span> (env <span className="font-mono">SCHED_*</span>).
         </p>
       </div>
@@ -132,19 +132,19 @@ export default function Settings({ stats }) {
       <div className="card p-4">
         <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-white"><AlertTriangle className="h-4 w-4 text-rose-600 dark:text-rose-300" /> Kandidat stale (tua &gt;30h, minim sinyal)</h3>
         {stale.length === 0 ? (
-          <p className="py-2 text-xs text-slate-400 dark:text-slate-600">Tidak ada kandidat stale pada sampel.</p>
+          <p className="py-2 text-xs text-slate-500 dark:text-slate-600">Tidak ada kandidat stale pada sampel.</p>
         ) : (
           <div className="space-y-1.5">
             {stale.map(({ m, ageDays, signal }) => (
               <div key={m.id} className="flex items-center gap-2 rounded-md bg-slate-50 dark:bg-white/[0.02] px-2.5 py-1.5">
                 <span className={cn("h-1.5 w-1.5 rounded-full", typeMeta(m.type).dot)} />
                 <span className="min-w-0 flex-1 truncate text-xs text-slate-600 dark:text-slate-300">{m.title}</span>
-                <span className="shrink-0 font-mono text-[10px] text-slate-400 dark:text-slate-500">{Math.round(ageDays)}h · sinyal {signal.toFixed(1)}</span>
+                <span className="shrink-0 font-mono text-[10px] text-slate-500 dark:text-slate-500">{Math.round(ageDays)}h · sinyal {signal.toFixed(1)}</span>
               </div>
             ))}
           </div>
         )}
-        <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-600">Kandidat ini tidak otomatis dihapus — review manual di tab Memories bila perlu.</p>
+        <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-600">Kandidat ini tidak otomatis dihapus — review manual di tab Memories bila perlu.</p>
       </div>
     </div>
   );
@@ -153,7 +153,7 @@ export default function Settings({ stats }) {
 function Field({ label, value, mono }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-600">{label}</div>
+      <div className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-600">{label}</div>
       <div className={cn("text-sm text-slate-700 dark:text-slate-200", mono && "font-mono text-xs break-all")}>{value}</div>
     </div>
   );
@@ -161,7 +161,7 @@ function Field({ label, value, mono }) {
 function Stat({ label, value, tone }) {
   return (
     <div className={cn("rounded-lg bg-slate-50 dark:bg-white/[0.02] px-3 py-2", tone === "warn" && "ring-1 ring-amber-500/20")}>
-      <div className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-600">{label}</div>
+      <div className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-600">{label}</div>
       <div className={cn("font-mono text-lg font-semibold", tone === "warn" ? "text-amber-600 dark:text-amber-300" : "text-slate-100")}>{value}</div>
     </div>
   );
