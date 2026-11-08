@@ -153,7 +153,7 @@ function hydrateIndexes(): void {
   store.clear();
   bm25.clear();
 
-  const stmt = db.prepare(`SELECT id, title, content, embedding FROM memories`);
+  const stmt = db.prepare(`SELECT id, title, content, embedding FROM memories WHERE superseded_by IS NULL`);
   let count = 0;
   while (stmt.step()) {
     const row = stmt.getAsObject() as any;
@@ -445,6 +445,9 @@ export function supersedeMemory(oldId: string, newId: string): boolean {
     oldId
   ]);
   scheduleSave();
+  // drop the vector immediately so superseded docs stop consuming
+  // top-K candidate slots (BM25 hits are filtered downstream anyway)
+  getVectorStore().remove(oldId);
   return true;
 }
 
