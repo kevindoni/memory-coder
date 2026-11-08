@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, ChevronDown, ChevronLeft, ChevronRight, Loader2, Inbox, X, Filter } from "lucide-react";
+import { Search, ChevronDown, ChevronLeft, ChevronRight, Loader2, Inbox, X, Filter, Maximize2 } from "lucide-react";
 import { api } from "../api.js";
 import TypeBadge from "../components/TypeBadge.jsx";
 import DeleteButton from "../components/DeleteButton.jsx";
 import FeedbackButtons from "../components/FeedbackButtons.jsx";
 import RelatedPanel from "../components/RelatedPanel.jsx";
+import MemoryDetailModal from "../components/MemoryDetailModal.jsx";
 import { ALL_TYPES, formatDate, timeAgo, typeMeta, cn } from "../lib.jsx";
 
 const PAGE_SIZE = 12;
@@ -15,6 +16,7 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [expanded, setExpanded] = useState(new Set());
+  const [detailId, setDetailId] = useState(null);
   const [page, setPage] = useState(0);
 
   // User input state (seeded once from initialFilter on mount)
@@ -178,6 +180,13 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
                         </span>
                       )}
                       <span className="font-mono text-[10px] text-slate-500 dark:text-slate-600">{timeAgo(m.created_at)}</span>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setDetailId(m.id); }}
+                        className="btn btn-ghost !p-1 text-slate-400 dark:text-slate-500"
+                        title="Buka detail lengkap"
+                      >
+                        <Maximize2 className="h-3 w-3" />
+                      </button>
                     </div>
                     <p className="mt-1.5 truncate text-sm font-medium text-slate-800 dark:text-slate-100">{m.title}</p>
                     <p className={cn("mt-0.5 whitespace-pre-wrap text-xs text-slate-500 dark:text-slate-500", !isOpen && "line-clamp-1")}>{m.content}</p>
@@ -222,6 +231,15 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
             </button>
           </div>
         </div>
+      )}
+
+      {detailId && (
+        <MemoryDetailModal
+          memoryId={detailId}
+          projects={projectsList}
+          onClose={() => setDetailId(null)}
+          onChanged={fetchData}
+        />
       )}
     </div>
   );

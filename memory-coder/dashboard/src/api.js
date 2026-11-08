@@ -36,6 +36,7 @@ export const api = {
   },
   addMemory: (body) => request(`/admin/memories`, { method: "POST", body: JSON.stringify(body) }),
   deleteMemory: (id) => request(`/admin/memories/${id}`, { method: "DELETE" }),
+  getMemory: (id) => request(`/admin/memories/${id}`),
   updateMemory: (id, body) => request(`/admin/memories/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   evalTrend: () => request("/admin/eval-trend"),
   feedback: (memory_id, useful, note) => request(`/feedback`, { method: "POST", body: JSON.stringify({ memory_id, useful, note }) }),
