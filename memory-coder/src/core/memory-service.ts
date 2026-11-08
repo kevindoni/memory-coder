@@ -220,6 +220,7 @@ export async function recallService(args: unknown) {
   const candidatePool = (args as any).candidate_pool ?? 200;
   const useHybrid = (args as any).hybrid ?? true;
   const useReranking = (args as any).reranking ?? true;
+  const compact = (args as any).format === "compact";
 
   const projectId = resolveProjectId(project_id ?? undefined, project_name ?? undefined);
   const embedder = getEmbedder();
@@ -291,6 +292,28 @@ export async function recallService(args: unknown) {
     .filter((m): m is Memory => Boolean(m));
 
   for (const m of ranked) incrementAccessCount(m.id);
+
+  if (compact) {
+    // token-thrifty mode: titles + ids + tiny preview only; consumers
+    // expand selectively via GET /v1/admin/memories/:id (progressive
+    // disclosure instead of paying for full content up front)
+    return {
+      success: true,
+      query,
+      format: "compact",
+      results: ranked.map((m, i) => ({
+        id: m.id,
+        type: m.type,
+        title: m.title,
+        similarity: Math.round(finalRanked[i].similarity * 1000) / 1000,
+        preview: (m.content || "").replace(/\s+/g, " ").slice(0, 90)
+      })),
+      expand: "GET /v1/admin/memories/:id",
+      total_searched: store.size,
+      mode: useHybrid ? "hybrid" : "semantic",
+      reranked: useReranking
+    };
+  }
 
   return {
     success: true,

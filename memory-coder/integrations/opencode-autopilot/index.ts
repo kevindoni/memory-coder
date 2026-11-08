@@ -18,8 +18,11 @@ import { Plugin } from "@opencode/plugin"
 
 const BRIDGE = process.env.MEMORY_CODER_BRIDGE_URL || "http://127.0.0.1:3333"
 const RECALL_MIN_CHARS = 16
-const RECALL_LIMIT = 4
-const INJECT_MAX_CHARS = 1400
+const RECALL_LIMIT = 6
+const MIN_SIM = Number(process.env.MEMORY_AUTOPILOT_MIN_SIM || 0.45)
+const STRONG_SIM = Number(process.env.MEMORY_AUTOPILOT_STRONG_SIM || 0.6)
+const SNIPPET_CHARS = Number(process.env.MEMORY_AUTOPILOT_SNIPPET || 160)
+const INJECT_MAX_CHARS = 1200
 const DIGEST_KEY = "memory-coder-autopilot"
 
 const bridge = {
@@ -61,10 +64,16 @@ export default Plugin.define({
           cwd = ctx.location.directory
         }
         const r = await bridge.recall(text, cwd)
-        const hits = (r?.results || []).filter((h) => h && h.content)
+        // token-saving gate: only inject genuinely relevant memories.
+        // Tiered: strong hits (>=STRONG_SIM) inject up to 4; a single
+        // moderate hit (>=MIN_SIM) injects at most 2; below MIN_SIM skip
+        // entirely — mediocre context costs tokens and adds noise.
+        const strong = (r?.results || []).filter((h) => h && h.content && (h.similarity ?? 0) >= STRONG_SIM)
+        const moderate = (r?.results || []).filter((h) => h && h.content && (h.similarity ?? 0) >= MIN_SIM)
+        const hits = strong.length > 0 ? strong.slice(0, 4) : moderate.slice(0, 2)
         if (!sid || hits.length === 0) return
         const lines = hits.map(
-          (h) => `- [${h.type || "memory"}${h.similarity != null ? ` ${h.similarity}` : ""}] ${(h.title || "").slice(0, 80)}: ${(h.content || "").replace(/\s+/g, " ").slice(0, 220)}`,
+          (h) => `- [${h.type || "memory"}${h.similarity != null ? ` ${h.similarity}` : ""}] ${(h.title || "").slice(0, 80)}: ${(h.content || "").replace(/\s+/g, " ").slice(0, SNIPPET_CHARS)}`,
         )
         const value = `Memori relevan dari memory-coder (auto-recall, jangan kutip mentah — gunakan sebagai konteks):\n${lines.join("\n")}`.slice(0, INJECT_MAX_CHARS)
         await ctx.session.instructions.entry.put({ sessionID: sid, key: "memory-context", value })
