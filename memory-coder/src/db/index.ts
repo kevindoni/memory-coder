@@ -176,11 +176,33 @@ export function scheduleSave(): void {
   savePending = true;
   dirtyCount++;
   if (dirtyCount >= FLUSH_THRESHOLD) {
-    flushNow();
+    flushAsyncNow();
     return;
   }
   if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(flushNow, SAVE_DEBOUNCE_MS);
+  saveTimer = setTimeout(flushAsyncNow, SAVE_DEBOUNCE_MS);
+}
+
+/**
+ * Async flush for the hot path (timers, request handlers). If a write is
+ * already in flight the request is deferred to a follow-up timer so the
+ * newest snapshot always reaches disk eventually.
+ */
+export function flushAsyncNow(): void {
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  if (!savePending) return;
+  if (asyncWriteInFlight) {
+    saveTimer = setTimeout(flushAsyncNow, SAVE_DEBOUNCE_MS);
+    return;
+  }
+  savePending = false;
+  dirtyCount = 0;
+  void saveDatabaseAsync().catch((e) => {
+    console.error("[db] async flush failed:", e instanceof Error ? e.message : String(e));
+  });
 }
 
 export function flushNow(): void {
@@ -195,7 +217,7 @@ export function flushNow(): void {
   }
 }
 
-/** Synchronous, immediate persist — use sparingly. */
+/** Synchronous, immediate persist — shutdown hooks only (blocks the loop). */
 export function saveDatabase(): void {
   if (!db) return;
   const data = db.export();
@@ -206,6 +228,30 @@ export function saveDatabase(): void {
     fs.mkdirSync(dir, { recursive: true });
   }
   fs.writeFileSync(fullPath, buffer);
+}
+
+let asyncWriteInFlight: Promise<void> | null = null;
+
+/**
+ * Async, coalesced persist for the hot flush path. A 25MB writeFileSync on
+ * every debounced flush froze the whole event loop (health checks timed out
+ * while flushes queued); here only db.export() stays synchronous (CPU-bound
+ * serialization) and the disk write is off-loop. Single-writer process +
+ * in-flight coalescing keeps snapshots consistent.
+ */
+export async function saveDatabaseAsync(): Promise<void> {
+  if (!db) return;
+  if (asyncWriteInFlight) return asyncWriteInFlight;
+  const buffer = Buffer.from(db.export());
+  const fullPath = path.resolve(activeDbPath);
+  const dir = path.dirname(fullPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  asyncWriteInFlight = fs.promises.writeFile(fullPath, buffer).finally(() => {
+    asyncWriteInFlight = null;
+  });
+  return asyncWriteInFlight;
 }
 
 export function getDb(): Database {

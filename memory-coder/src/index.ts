@@ -7,7 +7,7 @@ import { startBridge } from "./bridge/http.js";
 import { startAutoIndexer } from "./core/git-indexer.js";
 import { startFileWatcher } from "./core/file-watcher.js";
 import { startSmartManager } from "./core/smart-manager.js";
-import { tools, toolHandlers } from "./tools/index.js";
+import { tools, toolHandlers, bridgeAlive } from "./tools/index.js";
 
 // Ensure debounced DB writes are flushed on shutdown
 function registerShutdownHooks(): void {
@@ -74,16 +74,26 @@ class MemoryCoderServer {
 
 async function main() {
   loadEnvFile();
-  await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
-  registerShutdownHooks();
 
   if (process.env.MEMORY_CODER_MODE === "bridge") {
+    await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
+    registerShutdownHooks();
     const port = Number(process.env.MEMORY_CODER_PORT || 3333);
     await startBridge(port);
     startAutoIndexer();
     startFileWatcher();
     startSmartManager(Number(process.env.MC_SMART_INTERVAL_MIN || 60));
     return;
+  }
+
+  // MCP stdio mode: single-writer rule. If the bridge is running, proxy all
+  // tool calls over HTTP and never open the database — two sql.js processes
+  // flushing the same file overwrite each other's writes.
+  if (await bridgeAlive()) {
+    console.error("[mcp] bridge detected — proxying via HTTP, database not opened");
+  } else {
+    await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
+    registerShutdownHooks();
   }
 
   const server = new MemoryCoderServer();

@@ -7,6 +7,53 @@ import {
   rememberService
 } from "../core/memory-service.js";
 
+/**
+ * Single-writer rule: when the HTTP bridge is running it owns memory.db.
+ * MCP stdio instances route tool calls to the bridge REST API instead of
+ * opening the database directly (two sql.js processes snapshot-flushing the
+ * same file silently clobber each other's writes).
+ */
+const BRIDGE_URL = (process.env.MEMORY_CODER_BRIDGE_URL || "http://127.0.0.1:3333").replace(/\/+$/, "");
+const PROBE_TTL_MS = 30_000;
+
+const REST_ROUTES: Record<string, string> = {
+  create_project: "/v1/create-project",
+  get_project_context: "/v1/get-project-context",
+  remember: "/v1/remember",
+  recall: "/v1/recall",
+  log_bug: "/v1/log-bug",
+  feedback: "/v1/feedback"
+};
+
+let bridgeProbe: { alive: boolean; checkedAt: number } | null = null;
+
+export async function bridgeAlive(): Promise<boolean> {
+  const now = Date.now();
+  if (bridgeProbe && now - bridgeProbe.checkedAt < PROBE_TTL_MS) return bridgeProbe.alive;
+  let alive = false;
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 1200);
+    const res = await fetch(`${BRIDGE_URL}/health`, { signal: ctrl.signal });
+    clearTimeout(t);
+    const body = (await res.json().catch(() => null)) as { ok?: boolean } | null;
+    alive = Boolean(body && body.ok);
+  } catch {
+    alive = false;
+  }
+  bridgeProbe = { alive, checkedAt: now };
+  return alive;
+}
+
+async function callBridge(route: string, args: unknown): Promise<unknown> {
+  const res = await fetch(`${BRIDGE_URL}${route}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(args ?? {})
+  });
+  return res.json().catch(() => ({ success: false, error: `bridge HTTP ${res.status}` }));
+}
+
 export const tools = [
   {
     name: "create_project",
@@ -97,7 +144,7 @@ export const tools = [
   }
 ];
 
-export const toolHandlers: Record<string, (args: unknown) => Promise<unknown>> = {
+const directHandlers: Record<string, (args: unknown) => Promise<unknown>> = {
   create_project: createProjectService,
   get_project_context: getProjectContextService,
   remember: rememberService,
@@ -105,3 +152,19 @@ export const toolHandlers: Record<string, (args: unknown) => Promise<unknown>> =
   log_bug: logBugService,
   feedback: feedbackService
 };
+
+export const toolHandlers: Record<string, (args: unknown) => Promise<unknown>> = {};
+for (const name of Object.keys(directHandlers)) {
+  toolHandlers[name] = async (args: unknown) => {
+    if (await bridgeAlive()) {
+      try {
+        return await callBridge(REST_ROUTES[name], args);
+      } catch (e) {
+        // bridge owns the DB in this mode — no silent fallback to a cold
+        // local database; surface the failure instead
+        return { success: false, error: `bridge call failed: ${e instanceof Error ? e.message : String(e)}` };
+      }
+    }
+    return directHandlers[name](args);
+  };
+}
