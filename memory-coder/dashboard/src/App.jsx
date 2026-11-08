@@ -3,6 +3,7 @@ import { api } from "./api.js";
 import Sidebar from "./components/Sidebar.jsx";
 import AddMemoryModal from "./components/AddMemoryModal.jsx";
 import Overview from "./pages/Overview.jsx";
+import Insights from "./pages/Insights.jsx";
 import Projects from "./pages/Projects.jsx";
 import Memories from "./pages/Memories.jsx";
 import Logs from "./pages/Logs.jsx";
@@ -14,10 +15,11 @@ import Graph from "./pages/Graph.jsx";
 import Conflicts from "./pages/Conflicts.jsx";
 import SmartManager from "./pages/SmartManager.jsx";
 import Settings from "./pages/Settings.jsx";
-import { LayoutDashboard, FolderKanban, BrainCircuit, ScrollText, Plus, Sparkles, ClipboardList, GraduationCap, Search, Network, GitCompare, Cpu, Settings as Cog } from "lucide-react";
+import { LayoutDashboard, FolderKanban, BrainCircuit, ScrollText, Plus, Sparkles, ClipboardList, GraduationCap, Search, Network, GitCompare, Cpu, Settings as Cog, TrendingUp } from "lucide-react";
 
 const TITLES = {
   overview: { label: "Overview", icon: LayoutDashboard },
+  insights: { label: "Insights", icon: TrendingUp },
   projects: { label: "Projects", icon: FolderKanban },
   memories: { label: "Memories", icon: BrainCircuit },
   recall: { label: "Recall", icon: Search },
@@ -117,6 +119,7 @@ export default function App() {
           <div className="scrollbar-thin flex-1 overflow-y-auto px-8 py-6">
             <div className="mx-auto max-w-6xl">
               {view === "overview" && <Overview stats={stats} onOpenMemories={openMemories} />}
+              {view === "insights" && <Insights />}
               {view === "projects" && <Projects signal={refreshSignal} onOpenMemories={openMemories} onNeedsRefresh={refresh} />}
               {view === "memories" && (
                 <Memories key={memSeed.key} initialFilter={memSeed.filter} projects={projects} signal={refreshSignal} onNeedsRefresh={refresh} />

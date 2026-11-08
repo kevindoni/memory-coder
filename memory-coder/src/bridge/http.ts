@@ -16,6 +16,7 @@ import {
 import {
   addMemoryService,
   conflictsService,
+  evalTrendService,
   deleteMemoryService,
   deleteProjectService,
   embedStatusService,
@@ -121,6 +122,7 @@ export async function startBridge(port = 3333) {
   adminRouter.post("/reembed", writeLimiter, (req: Request, res) => respond(res, reembedService(req.body)));
   adminRouter.get("/embed-status", (_req, res) => respond(res, Promise.resolve(embedStatusService())));
   adminRouter.get("/conflicts", (req: Request, res) => respond(res, Promise.resolve(conflictsService(req.query as Record<string, unknown>))));
+  adminRouter.get("/eval-trend", (_req: Request, res) => respond(res, Promise.resolve(evalTrendService())));
   adminRouter.get("/memories/:id/chain", (req: Request, res) => respond(res, Promise.resolve(supersedeChainService(String(req.params.id)))));
   adminRouter.post("/projects/:id/smart-summary", aiLimiter, (req: Request, res) => respond(res, smartSummaryService(String(req.params.id))));
   adminRouter.get("/logs", (req: Request, res) => respond(res, listLogsService(req.query as Record<string, unknown>)));

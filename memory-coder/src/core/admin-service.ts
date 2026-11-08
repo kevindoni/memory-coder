@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import {
   countMemories,
   createMemory,
@@ -177,8 +179,33 @@ function jaccard(a: Set<string>, b: Set<string>): number {
  * Detect near-duplicate and possibly-conflicting decision memory pairs using
  * token Jaccard similarity (same logic as scripts/consolidate.cjs, in-process).
  */
+export function evalTrendService() {
+  const candidates = [
+    path.resolve(process.cwd(), "memory-coder", "scripts", "eval-trend.jsonl"),
+    path.resolve(process.cwd(), "scripts", "eval-trend.jsonl")
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      const lines = fs.readFileSync(p, "utf-8").split("\n").filter(Boolean).slice(-200);
+      const trend = lines
+        .map((l) => { try { return JSON.parse(l); } catch { return null; } })
+        .filter((x): x is Record<string, unknown> => Boolean(x));
+      return { success: true, trend, source: path.basename(path.dirname(p)) };
+    }
+  }
+  return { success: true, trend: [] as Record<string, unknown>[], source: null };
+}
+
 export function conflictsService(args: unknown) {
-  const { dupThreshold = 0.82, conflictLo = 0.4, conflictHi = 0.75, limit = 200 } = (args || {}) as Record<string, number>;
+  const raw = (args || {}) as Record<string, unknown>;
+  const num = (v: unknown, d: number) => {
+    const n = Number(v);
+    return Number.isFinite(n) && n > 0 ? Math.min(n, 5000) : d;
+  };
+  const dupThreshold = num(raw.dupThreshold, 0.82);
+  const conflictLo = num(raw.conflictLo, 0.4);
+  const conflictHi = num(raw.conflictHi, 0.75);
+  const limit = num(raw.limit, 200);
   const mems = getAllMemories(limit).filter((m) => !m.superseded_by);
   const blocks = new Map<string, Memory[]>();
   for (const m of mems) {

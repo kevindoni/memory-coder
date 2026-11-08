@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GitCompare, Loader2, Check, Trash2, Layers, AlertTriangle } from "lucide-react";
+import { GitCompare, Loader2, Check, Layers, AlertTriangle } from "lucide-react";
 import { api } from "../api.js";
 import TypeBadge from "../components/TypeBadge.jsx";
 import { cn } from "../lib.jsx";
@@ -18,11 +18,10 @@ export default function Conflicts() {
   };
   useEffect(() => { load(); }, []);
 
-  const remove = async (keepId, dropId, pairKey) => {
-    if (!confirm("Hapus memori yang kalah? (ada backup di activity log)")) return;
+  const resolve = async (keepId, dropId, pairKey) => {
     setBusy(pairKey);
     try {
-      await api.deleteMemory(dropId);
+      await api.updateMemory(dropId, { superseded_by: keepId });
       setResolved((s) => new Set(s).add(pairKey));
     } catch (e) {
       alert("Gagal: " + e.message);
@@ -52,11 +51,11 @@ export default function Conflicts() {
           ))}
         </div>
         <div className="mt-2 flex items-center gap-1.5">
-          <button onClick={() => remove(pair.a.id, pair.b.id, key)} disabled={busy === key} className="btn btn-ghost !py-1 text-xs text-emerald-600 dark:text-emerald-300 hover:bg-emerald-500/10">
-            {busy === key ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />} Simpan A
+          <button onClick={() => resolve(pair.a.id, pair.b.id, key)} disabled={busy === key} className="btn btn-ghost !py-1 text-xs text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10" title="B dipersilangkan (superseded), A tetap aktif">
+            {busy === key ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />} Pertahankan A
           </button>
-          <button onClick={() => remove(pair.b.id, pair.a.id, key)} disabled={busy === key} className="btn btn-ghost !py-1 text-xs text-emerald-600 dark:text-emerald-300 hover:bg-emerald-500/10">
-            <Check className="h-3 w-3" /> Simpan B
+          <button onClick={() => resolve(pair.b.id, pair.a.id, key)} disabled={busy === key} className="btn btn-ghost !py-1 text-xs text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/10" title="A dipersilangkan (superseded), B tetap aktif">
+            <Check className="h-3 w-3" /> Pertahankan B
           </button>
           <button onClick={() => setResolved((s) => new Set(s).add(key))} className="btn btn-ghost !py-1 text-xs text-slate-500 dark:text-slate-400">
             Lewati
