@@ -4,12 +4,12 @@ All optimizations have been implemented, built, and unit-tested. The system is n
 
 ## 🎯 Completed Optimizations
 
-### 1. **Vector Store with HNSW-like ANN Indexing** ✅
+### 1. **Vector Store with exact search up to 100k vectors** ✅
 - **File**: `src/embeddings/vector-store.ts`
-- **Implementation**: Pure-JS tiered search with LSH bucketing
-  - Small datasets (<600 memories): exact brute-force (fastest)
-  - Large datasets: bucketed candidate filtering → exact rank
-- **Result**: 10-50x faster than brute-force on large collections
+- **Implementation**: exact brute-force scan with a unit-length invariant and plain dot products
+  - Up to 100k memories: exact search (7k × 384-dim measured at single-digit ms)
+  - Beyond that: bucketed candidate filtering (approximate, recall trade-off)
+  - History: the original bucketed ANN only probed ~19% of vectors per query and silently capped recall at 7k memories (memories failed to self-match their own titles). Replaced by exact search; see git history for details.
 - **Unit test confirmed**: ✅ Cosine similarity rankings are accurate
 
 ### 2. **BM25 Keyword Search + Hybrid Fusion** ✅
@@ -169,7 +169,7 @@ Query → Embedding → Brute-force cosine similarity (500 max) → Top 5 result
 ### Search Pipeline (After)
 ```
 Query → Embedding
-  ├→ Semantic search (ANN via bucketed index)
+  ├→ Semantic search (exact vector scan)
   └→ BM25 keyword search
      → RRF Fusion
        → Re-ranking (multi-signal score)

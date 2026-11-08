@@ -128,7 +128,7 @@ Eval trend is appended to `eval-trend.jsonl` (gitignored) — track recall quali
 
 - **Backend:** TypeScript, Express 5, sql.js (SQLite WASM), zod
 - **Embeddings:** `@xenova/transformers` — `paraphrase-multilingual-MiniLM-L12-v2` (384-dim). Configurable via `EMBEDDING_MODEL` (dimension-agnostic — mpnet 768-dim works when RAM allows).
-- **Retrieval:** hybrid (bucketed ANN + BM25) + multi-signal reranker (similarity, overlap, utility, recency, importance)
+- **Retrieval:** hybrid (exact vector scan + BM25) + multi-signal reranker (similarity, overlap, utility, recency, importance)
 - **LLM (RAG/capture):** OpenRouter (`openai/gpt-4o-mini` by default) with optional backup provider via `LLM_BACKUP_*` env vars
 - **Dashboard:** React 18, Vite 5, Tailwind 3, lucide-react
 - **Process:** PM2
