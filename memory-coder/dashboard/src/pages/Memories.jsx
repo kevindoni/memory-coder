@@ -179,7 +179,7 @@ export default function Memories({ initialFilter = {}, projects = [], signal = 0
                       )}
                       <span className="font-mono text-[10px] text-slate-500 dark:text-slate-600">{timeAgo(m.created_at)}</span>
                     </div>
-                    <p className="mt-1.5 truncate text-sm font-medium text-slate-100">{m.title}</p>
+                    <p className="mt-1.5 truncate text-sm font-medium text-slate-800 dark:text-slate-100">{m.title}</p>
                     <p className={cn("mt-0.5 whitespace-pre-wrap text-xs text-slate-500 dark:text-slate-500", !isOpen && "line-clamp-1")}>{m.content}</p>
                     {isOpen && m.tags?.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">

@@ -147,7 +147,7 @@ export default function Recall({ projects = [] }) {
                   <ScoreBar label="conf" value={Math.round((r.confidence ?? 0) * 100)} tone="emerald" />
                   <ScoreBar label="util" value={Math.round((r.utility ?? 0.5) * 100)} tone="violet" />
                 </div>
-                <p className="mt-1.5 text-sm font-medium text-slate-100">{r.title}</p>
+                <p className="mt-1.5 text-sm font-medium text-slate-800 dark:text-slate-100">{r.title}</p>
                 <p className="mt-0.5 line-clamp-2 text-xs text-slate-500 dark:text-slate-500">{r.content}</p>
               </div>
             </div>
