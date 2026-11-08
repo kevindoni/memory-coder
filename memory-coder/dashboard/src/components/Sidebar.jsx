@@ -1,4 +1,4 @@
-import { LayoutDashboard, FolderKanban, BrainCircuit, Activity, ScrollText, RefreshCw, Sparkles, ClipboardList, GraduationCap, Search, Network, GitCompare, Cpu, Settings as Cog, Sun, Moon, TrendingUp } from "lucide-react";
+import { LayoutDashboard, FolderKanban, BrainCircuit, Activity, ScrollText, RefreshCw, GraduationCap, Search, Network, GitCompare, Cpu, Settings as Cog, Sun, Moon, TrendingUp } from "lucide-react";
 import { cn } from "../lib.jsx";
 
 const NAV = [
@@ -11,8 +11,6 @@ const NAV = [
   { id: "learning", label: "Learning", icon: GraduationCap },
   { id: "conflicts", label: "Conflicts", icon: GitCompare },
   { id: "smart", label: "Smart Manager", icon: Cpu },
-  { id: "ask", label: "Ask AI", icon: Sparkles },
-  { id: "capture", label: "Capture Chat", icon: ClipboardList },
   { id: "logs", label: "Activity Log", icon: ScrollText },
   { id: "settings", label: "Settings", icon: Cog }
 ];

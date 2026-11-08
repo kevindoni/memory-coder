@@ -3,8 +3,6 @@ import path from "path";
 import fs from "fs";
 import { createMemory, getAllProjects, getProject, memoryExistsBySha } from "../db/index.js";
 import { getEmbedder } from "../embeddings/index.js";
-import { summarizeCommits } from "./auto-summarizer.js";
-import { llmConfigured } from "./llm-service.js";
 import { recordLog } from "./log-service.js";
 
 const MAX_COMMITS = 100;
@@ -51,7 +49,6 @@ export async function indexProjectGit(projectId: string) {
   const embedder = getEmbedder();
   let added = 0;
   let skipped = 0;
-  const addedCommits: Array<{ sha: string; author: string; date: string; message: string }> = [];
 
   for (const commit of [...commits].reverse()) {
     if (commitAlreadyIndexed(project.id, commit.sha)) {
@@ -72,19 +69,7 @@ export async function indexProjectGit(projectId: string) {
       importance: 0.3,
       source_sha: commit.sha
     } as any);
-    addedCommits.push(commit);
     added++;
-  }
-
-  // LLM-powered smart extraction of newly indexed commits
-  let smartAdded = 0;
-  if (addedCommits.length > 0 && llmConfigured()) {
-    try {
-      const result = await summarizeCommits(project.id, project.name, addedCommits);
-      smartAdded = result.added;
-    } catch (e) {
-      console.error("[indexer] smart summary error:", e instanceof Error ? e.message : String(e));
-    }
   }
 
   recordLog({
@@ -92,12 +77,12 @@ export async function indexProjectGit(projectId: string) {
     entityType: "git",
     entityId: project.id,
     projectId: project.id,
-    summary: `Index git: ${project.name} +${added} commit${smartAdded ? `, smart +${smartAdded}` : ""}${skipped ? `, ${skipped} duplikat` : ""}`,
+    summary: `Index git: ${project.name} +${added} commit${skipped ? `, ${skipped} duplikat` : ""}`,
     source: "indexer",
-    metadata: { added, skipped, smartAdded, total: commits.length }
+    metadata: { added, skipped, total: commits.length }
   });
 
-  return { success: true, project: project.name, added, skipped, smartAdded, total: commits.length };
+  return { success: true, project: project.name, added, skipped, total: commits.length };
 }
 
 /**
@@ -105,19 +90,6 @@ export async function indexProjectGit(projectId: string) {
  * uses the LLM to extract typed memories. Useful for initial population of
  * projects that were raw-indexed before the LLM was configured.
  */
-export async function smartSummaryProject(projectId: string, maxCommits = 50) {
-  const project = getProject(projectId);
-  if (!project) return { success: false, error: "Project not found" };
-  if (!isGitRepo(project.path)) return { success: false, skipped: true, error: "Not a git repository" };
-  if (!llmConfigured()) return { success: false, error: "OpenRouter belum dikonfigurasi" };
-
-  const commits = readCommits(project.path, maxCommits);
-  if (commits.length === 0) return { success: false, skipped: true, error: "No commits or git unavailable" };
-
-  const result = await summarizeCommits(project.id, project.name, commits);
-  return { success: true, project: project.name, smartAdded: result.added, commits: commits.length, skipped: result.skipped, error: result.error };
-}
-
 export async function indexAllProjects() {  const projects = getAllProjects();
   const results: Array<Record<string, unknown>> = [];
   let totalAdded = 0;

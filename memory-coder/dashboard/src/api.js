@@ -52,7 +52,6 @@ export const api = {
   deleteProject: (id) => request(`/admin/projects/${id}`, { method: "DELETE" }),
   updateProject: (id, body) => request(`/admin/projects/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   indexProject: (id) => request(`/admin/projects/${id}/index`, { method: "POST" }),
-  smartSummary: (id) => request(`/admin/projects/${id}/smart-summary`, { method: "POST" }),
   logs: (params = {}) => {
     const qs = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {
@@ -60,11 +59,6 @@ export const api = {
     });
     return request(`/admin/logs?${qs.toString()}`);
   },
-  llmStatus: () => request("/admin/llm-status"),
-  ask: (body) => request("/admin/ask", { method: "POST", body: JSON.stringify(body) }),
-  capture: (body) => request("/admin/capture", { method: "POST", body: JSON.stringify(body) }),
-  captureFile: (body) => request("/admin/capture-file", { method: "POST", body: JSON.stringify(body) }),
-  fileWatcher: () => request("/admin/file-watcher"),
   smartStatus: () => request("/admin/smart-status"),
   smartExpire: (apply) => request(`/admin/smart-expire`, { method: "POST", body: JSON.stringify(apply ? { apply: true } : {}) }),
   smartScope: (apply) => request(`/admin/smart-scope`, { method: "POST", body: JSON.stringify(apply ? { apply: true } : {}) })

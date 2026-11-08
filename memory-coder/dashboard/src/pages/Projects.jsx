@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FolderKanban, MapPin, Hash, ChevronRight, Loader2, GitBranch, Sparkles, CheckCircle2, AlertCircle, Info, Pencil } from "lucide-react";
+import { FolderKanban, MapPin, Hash, ChevronRight, Loader2, GitBranch, CheckCircle2, AlertCircle, Info, Pencil } from "lucide-react";
 import { api } from "../api.js";
 import DeleteButton from "../components/DeleteButton.jsx";
 import ProjectDetailModal from "../components/ProjectDetailModal.jsx";
@@ -38,21 +38,6 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
     try {
       const r = await api.indexProject(id);
       setResult((s) => ({ ...s, [id]: r }));
-      load();
-      onNeedsRefresh?.();
-    } catch (e) {
-      setResult((s) => ({ ...s, [id]: { success: false, error: e.message } }));
-    } finally {
-      setBusy((s) => ({ ...s, [id]: null }));
-    }
-  };
-
-  const handleSmart = async (id) => {
-    setBusy((s) => ({ ...s, [id]: "smart" }));
-    setResult((s) => ({ ...s, [id]: null }));
-    try {
-      const r = await api.smartSummary(id);
-      setResult((s) => ({ ...s, [id]: { ...r, kind: "smart" } }));
       load();
       onNeedsRefresh?.();
     } catch (e) {
@@ -132,15 +117,6 @@ export default function Projects({ signal, onOpenMemories, onNeedsRefresh }) {
                   title="Detail project (breakdown + pola lintas-project)"
                 >
                   <Info className="h-3.5 w-3.5" /> Detail
-                </button>
-                <button
-                  onClick={() => handleSmart(p.id)}
-                  disabled={!!busy[p.id]}
-                  className="btn btn-ghost !py-1 text-xs text-violet-600 dark:text-violet-300 hover:bg-violet-500/10"
-                  title="AI ekstrak memori pintar dari commit git"
-                >
-                  {busy[p.id] === "smart" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                  Smart
                 </button>
                 <button
                   onClick={() => handleIndex(p.id)}

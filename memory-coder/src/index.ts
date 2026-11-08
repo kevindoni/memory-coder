@@ -5,7 +5,6 @@ import { initDatabase, flushNow } from "./db/index.js";
 import { loadEnvFile } from "./utils/env.js";
 import { startBridge } from "./bridge/http.js";
 import { startAutoIndexer } from "./core/git-indexer.js";
-import { startFileWatcher } from "./core/file-watcher.js";
 import { startSmartManager } from "./core/smart-manager.js";
 import { tools, toolHandlers, bridgeAlive } from "./tools/index.js";
 
@@ -81,7 +80,6 @@ async function main() {
     const port = Number(process.env.MEMORY_CODER_PORT || 3333);
     await startBridge(port);
     startAutoIndexer();
-    startFileWatcher();
     startSmartManager(Number(process.env.MC_SMART_INTERVAL_MIN || 60));
     return;
   }

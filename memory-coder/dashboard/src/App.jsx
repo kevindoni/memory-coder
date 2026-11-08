@@ -7,15 +7,14 @@ import Insights from "./pages/Insights.jsx";
 import Projects from "./pages/Projects.jsx";
 import Memories from "./pages/Memories.jsx";
 import Logs from "./pages/Logs.jsx";
-import Ask from "./pages/Ask.jsx";
-import Capture from "./pages/Capture.jsx";
+
 import Learning from "./pages/Learning.jsx";
 import Recall from "./pages/Recall.jsx";
 import Graph from "./pages/Graph.jsx";
 import Conflicts from "./pages/Conflicts.jsx";
 import SmartManager from "./pages/SmartManager.jsx";
 import Settings from "./pages/Settings.jsx";
-import { LayoutDashboard, FolderKanban, BrainCircuit, ScrollText, Plus, Sparkles, ClipboardList, GraduationCap, Search, Network, GitCompare, Cpu, Settings as Cog, TrendingUp } from "lucide-react";
+import { LayoutDashboard, FolderKanban, BrainCircuit, ScrollText, Plus, GraduationCap, Search, Network, GitCompare, Cpu, Settings as Cog, TrendingUp } from "lucide-react";
 
 const TITLES = {
   overview: { label: "Overview", icon: LayoutDashboard },
@@ -27,8 +26,6 @@ const TITLES = {
   learning: { label: "Learning", icon: GraduationCap },
   conflicts: { label: "Conflicts", icon: GitCompare },
   smart: { label: "Smart Manager", icon: Cpu },
-  ask: { label: "Ask AI", icon: Sparkles },
-  capture: { label: "Capture Chat", icon: ClipboardList },
   logs: { label: "Activity Log", icon: ScrollText },
   settings: { label: "Settings", icon: Cog }
 };
@@ -109,32 +106,23 @@ export default function App() {
             <Plus className="h-3.5 w-3.5" /> Tambah Memori
           </button>
         </header>
-        {view === "ask" ? (
-          <div className="flex flex-1 flex-col overflow-hidden px-8 pb-6 pt-1">
-            <div className="mx-auto flex h-full w-full max-w-4xl flex-col">
-              <Ask projects={projects} signal={refreshSignal} />
-            </div>
+        <div className="scrollbar-thin flex-1 overflow-y-auto px-8 py-6">
+          <div className="mx-auto max-w-6xl">
+            {view === "overview" && <Overview stats={stats} onOpenMemories={openMemories} />}
+            {view === "insights" && <Insights />}
+            {view === "projects" && <Projects signal={refreshSignal} onOpenMemories={openMemories} onNeedsRefresh={refresh} />}
+            {view === "memories" && (
+              <Memories key={memSeed.key} initialFilter={memSeed.filter} projects={projects} signal={refreshSignal} onNeedsRefresh={refresh} />
+            )}
+            {view === "learning" && <Learning projects={projects} />}
+            {view === "recall" && <Recall projects={projects} />}
+            {view === "graph" && <Graph projects={projects} />}
+            {view === "conflicts" && <Conflicts />}
+            {view === "smart" && <SmartManager />}
+            {view === "settings" && <Settings stats={stats} />}
+            {view === "logs" && <Logs projects={projects} signal={refreshSignal} />}
           </div>
-        ) : (
-          <div className="scrollbar-thin flex-1 overflow-y-auto px-8 py-6">
-            <div className="mx-auto max-w-6xl">
-              {view === "overview" && <Overview stats={stats} onOpenMemories={openMemories} />}
-              {view === "insights" && <Insights />}
-              {view === "projects" && <Projects signal={refreshSignal} onOpenMemories={openMemories} onNeedsRefresh={refresh} />}
-              {view === "memories" && (
-                <Memories key={memSeed.key} initialFilter={memSeed.filter} projects={projects} signal={refreshSignal} onNeedsRefresh={refresh} />
-              )}
-              {view === "learning" && <Learning projects={projects} />}
-              {view === "recall" && <Recall projects={projects} />}
-              {view === "graph" && <Graph projects={projects} />}
-              {view === "conflicts" && <Conflicts />}
-              {view === "smart" && <SmartManager />}
-              {view === "settings" && <Settings stats={stats} />}
-              {view === "capture" && <Capture projects={projects} onNeedsRefresh={refresh} />}
-              {view === "logs" && <Logs projects={projects} signal={refreshSignal} />}
-            </div>
-          </div>
-        )}
+        </div>
       </main>
       <AddMemoryModal open={showAddModal} onClose={() => setShowAddModal(false)} projects={projects} onSaved={refresh} />
     </div>

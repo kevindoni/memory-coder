@@ -20,7 +20,7 @@ import {
 } from "../db/index.js";
 import { countLogs, getLogs, LogFilter } from "../db/index.js";
 import { getEmbedder } from "../embeddings/index.js";
-import { indexProjectGit, smartSummaryProject } from "./git-indexer.js";
+import { indexProjectGit } from "./git-indexer.js";
 import { recordLog } from "./log-service.js";
 import { getSmartStats, expireStaleMemories, autoScopeUnscoped } from "./smart-manager.js";
 
@@ -326,8 +326,4 @@ export async function deleteProjectService(id: string) {
 
 export async function indexProjectService(id: string) {
   return indexProjectGit(id);
-}
-
-export async function smartSummaryService(id: string) {
-  return smartSummaryProject(id);
 }
