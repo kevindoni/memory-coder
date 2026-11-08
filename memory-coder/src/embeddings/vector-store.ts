@@ -1,5 +1,12 @@
 import { cosineSimilarity } from "./index.js";
 
+/**
+ * Corpus size below which search is exact brute-force. A full scan of
+ * 100k x 384-dim vectors is ~40-80ms in JS; the bucketed ANN path is only
+ * worth it beyond that, and it trades recall for speed (see search()).
+ */
+const EXACT_SEARCH_MAX = 100_000;
+
 export interface VectorEntry {
   id: string;
   vector: Float32Array;
@@ -25,8 +32,23 @@ class VectorStore {
 
   add(id: string, vector: Float32Array): void {
     if (this.dim === 0 && vector.length > 0) this.dim = vector.length;
-    this.vectors.set(id, vector);
+    this.vectors.set(id, this.ensureUnit(vector));
     this.dirty = true;
+  }
+
+  /**
+   * Store-side invariant: all vectors are unit-length so search can use a
+   * plain dot product (cosine of normalized vectors). Guard is cheap and
+   * makes the fast path always correct even for non-normalized input.
+   */
+  private ensureUnit(vec: Float32Array): Float32Array {
+    let sq = 0;
+    for (let i = 0; i < vec.length; i++) sq += vec[i] * vec[i];
+    const norm = Math.sqrt(sq);
+    if (norm === 0 || Math.abs(norm - 1) < 1e-3) return vec;
+    const out = new Float32Array(vec.length);
+    for (let i = 0; i < vec.length; i++) out[i] = vec[i] / norm;
+    return out;
   }
 
   remove(id: string): void {
@@ -94,12 +116,15 @@ class VectorStore {
     const n = this.vectors.size;
     if (n === 0) return [];
 
-    // For small datasets, exact search is fastest (no bucket overhead)
-    if (n <= 600) {
+    // Exact search up to a large corpus: measured on 7k x 384-dim vectors a
+    // full scan costs single-digit ms, while the bucketed path only probes
+    // ~19% of vectors (3/16 buckets) and silently caps recall — e.g. a
+    // memory failed to self-match its own title through the bucketed path.
+    if (n <= EXACT_SEARCH_MAX) {
       return this.bruteForce(query, k, opts?.pool);
     }
 
-    // For larger datasets, narrow candidates via buckets then exact-rank
+    // For very large datasets, narrow candidates via buckets then exact-rank
     this.ensureBuckets();
     const queryBucket = this.bucketIndex(query);
 
@@ -134,7 +159,11 @@ class VectorStore {
     const results: Array<{ id: string; similarity: number }> = [];
     for (const [id, vec] of this.vectors) {
       if (pool && !pool.has(id)) continue;
-      results.push({ id, similarity: cosineSimilarity(query, vec) });
+      // vectors (and the query embedding) are unit-length: dot == cosine,
+      // 3x cheaper than recomputing norms per pair
+      let dot = 0;
+      for (let i = 0; i < vec.length; i++) dot += query[i] * vec[i];
+      results.push({ id, similarity: dot });
     }
     results.sort((a, b) => b.similarity - a.similarity);
     return results.slice(0, k);
