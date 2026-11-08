@@ -11,6 +11,7 @@ import {
   Memory,
   MemoryFilter,
   searchMemories,
+  supersedeMemory,
   updateEmbedding,
   updateMemoryProject,
   updateProject
@@ -56,20 +57,41 @@ export async function smartScopeService(args: { apply?: boolean } = {}) {
   return { success: true, ...result, applied: !dryRun };
 }
 
-export async function updateMemoryService(id: string, args: { project_id?: string | null } = {}) {
-  if (!("project_id" in args)) {
-    return { success: false, error: "Nothing to update: provide project_id" };
+export async function updateMemoryService(id: string, args: { project_id?: string | null; superseded_by?: string | null } = {}) {
+  const hasProject = "project_id" in args;
+  const hasSupersede = "superseded_by" in args;
+  if (!hasProject && !hasSupersede) {
+    return { success: false, error: "Nothing to update: provide project_id or superseded_by" };
   }
-  const ok = updateMemoryProject(id, args.project_id ?? null);
-  if (!ok) return { success: false, error: `Memory not found: ${id}` };
-  recordLog({
-    action: "memory_rescoped",
-    entityType: "memory",
-    entityId: id,
-    projectId: args.project_id ?? null,
-    summary: `Memory re-scoped to project ${args.project_id ?? "(unscoped)"}`,
-    source: "admin"
-  });
+  if (!getMemoryById(id)) return { success: false, error: `Memory not found: ${id}` };
+  if (hasProject) {
+    const ok = updateMemoryProject(id, args.project_id ?? null);
+    if (!ok) return { success: false, error: `Memory not found: ${id}` };
+    recordLog({
+      action: "memory_rescoped",
+      entityType: "memory",
+      entityId: id,
+      projectId: args.project_id ?? null,
+      summary: `Memory re-scoped to project ${args.project_id ?? "(unscoped)"}`,
+      source: "admin"
+    });
+  }
+  if (hasSupersede) {
+    const by = args.superseded_by ?? null;
+    if (by) {
+      if (!getMemoryById(by)) return { success: false, error: `Superseding memory not found: ${by}` };
+      if (by === id) return { success: false, error: "Cannot supersede itself" };
+      supersedeMemory(id, by);
+      recordLog({
+        action: "memory_superseded",
+        entityType: "memory",
+        entityId: id,
+        projectId: null,
+        summary: `Superseded by ${by}`,
+        source: "admin"
+      });
+    }
+  }
   return { success: true, memory: getMemoryById(id) };
 }
 
