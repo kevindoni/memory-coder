@@ -6,7 +6,7 @@ import { loadEnvFile } from "./utils/env.js";
 import { startBridge } from "./bridge/http.js";
 import { startAutoIndexer } from "./core/git-indexer.js";
 import { startSmartManager } from "./core/smart-manager.js";
-import { tools, toolHandlers, bridgeAlive } from "./tools/index.js";
+import { tools, toolHandlers, bridgeAlive, enableProxyMode } from "./tools/index.js";
 
 // Ensure debounced DB writes are flushed on shutdown
 function registerShutdownHooks(): void {
@@ -60,7 +60,7 @@ class MemoryCoderServer {
 
   async run() {
     try {
-      await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
+      // DB init is owned by main(); proxy mode must never open the db
       const transport = new StdioServerTransport();
       await this.server.connect(transport);
       console.error("🚀 Memory Coder MCP Server running...");
@@ -89,6 +89,7 @@ async function main() {
   // flushing the same file overwrite each other's writes.
   if (await bridgeAlive()) {
     console.error("[mcp] bridge detected — proxying via HTTP, database not opened");
+    enableProxyMode();
   } else {
     await initDatabase(process.env.MEMORY_DB_PATH || "./data/memory.db");
     registerShutdownHooks();

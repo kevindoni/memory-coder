@@ -27,6 +27,18 @@ const REST_ROUTES: Record<string, string> = {
 
 let bridgeProbe: { alive: boolean; checkedAt: number } | null = null;
 
+/**
+ * Set once at startup when the bridge owns memory.db (proxy mode). In this
+ * mode the database is never opened here, so falling back to direct handlers
+ * mid-session would serve a stale snapshot and clobber the bridge's newer
+ * writes on the next flush. Bridge outages must surface as errors instead.
+ */
+let proxyOnly = false;
+
+export function enableProxyMode(): void {
+  proxyOnly = true;
+}
+
 export async function bridgeAlive(): Promise<boolean> {
   const now = Date.now();
   if (bridgeProbe && now - bridgeProbe.checkedAt < PROBE_TTL_MS) return bridgeProbe.alive;
@@ -156,11 +168,11 @@ const directHandlers: Record<string, (args: unknown) => Promise<unknown>> = {
 export const toolHandlers: Record<string, (args: unknown) => Promise<unknown>> = {};
 for (const name of Object.keys(directHandlers)) {
   toolHandlers[name] = async (args: unknown) => {
-    if (await bridgeAlive()) {
+    if (proxyOnly || (await bridgeAlive())) {
       try {
         return await callBridge(REST_ROUTES[name], args);
       } catch (e) {
-        // bridge owns the DB in this mode — no silent fallback to a cold
+        // bridge owns the DB in this mode — no silent fallback to a stale
         // local database; surface the failure instead
         return { success: false, error: `bridge call failed: ${e instanceof Error ? e.message : String(e)}` };
       }
