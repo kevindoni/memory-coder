@@ -18,6 +18,10 @@ function startFakeBridge() {
       res.end(JSON.stringify({ ok: true }));
       return;
     }
+    if (req.url === "/v1/remember") {
+      res.end(JSON.stringify({ success: true, from: "fake-bridge-remember" }));
+      return;
+    }
     if (req.url === "/v1/recall") {
       res.end(JSON.stringify(MARKER));
       return;
@@ -147,6 +151,53 @@ async function deadBridgeUrl() {
   child.kill("SIGKILL");
   await closeServer(bridge);
   console.log("5. e2e: bridge alive -> db file never created, tool call proxied ok");
+}
+
+// --- Scenario F: e2e — CLI with bridge alive must proxy over HTTP, never open the db
+{
+  const bridge = await startFakeBridge();
+  const port = bridge.address().port;
+  const tmpDb = path.join(os.tmpdir(), `mc-cli-proxy-test-${Date.now()}`, "memory.db");
+  const args = ["dist/cli.js", "remember", "--json", JSON.stringify({ content: "cli proxy regression", type: "general" })];
+  const { code, stdout } = await new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, args, {
+      cwd: process.cwd(),
+      env: { ...process.env, MEMORY_CODER_BRIDGE_URL: `http://127.0.0.1:${port}`, MEMORY_DB_PATH: tmpDb },
+      stdio: ["ignore", "pipe", "inherit"],
+    });
+    let out = "";
+    child.stdout.on("data", (d) => (out += d));
+    child.on("close", (c) => resolve({ code: c, stdout: out }));
+    child.on("error", reject);
+  });
+  assert.strictEqual(code, 0, `cli should exit 0 (got ${code})`);
+  assert.ok(stdout.includes("fake-bridge-remember"), `cli output must come from the bridge (got: ${stdout})`);
+  await new Promise((r) => setTimeout(r, 300)); // give a buggy direct write a window to flush
+  assert.ok(!fs.existsSync(tmpDb), "cli with bridge alive must not create/open the database file");
+  await closeServer(bridge);
+  console.log("6. e2e cli: bridge alive -> proxied via HTTP, db file never created ok");
+}
+
+// --- Scenario G: e2e — CLI with NO bridge still works directly and persists locally
+{
+  const dead = await deadBridgeUrl();
+  const tmpDb = path.join(os.tmpdir(), `mc-cli-direct-test-${Date.now()}`, "memory.db");
+  const args = ["dist/cli.js", "create-project", "--json", JSON.stringify({ name: "cli-direct", path: "D:/tmp/cli-direct" })];
+  const { code, stdout } = await new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, args, {
+      cwd: process.cwd(),
+      env: { ...process.env, MEMORY_CODER_BRIDGE_URL: dead, MEMORY_DB_PATH: tmpDb },
+      stdio: ["ignore", "pipe", "inherit"],
+    });
+    let out = "";
+    child.stdout.on("data", (d) => (out += d));
+    child.on("close", (c) => resolve({ code: c, stdout: out }));
+    child.on("error", reject);
+  });
+  assert.strictEqual(code, 0, `standalone cli should exit 0 (got ${code}): ${stdout}`);
+  assert.ok(stdout.includes("Project created successfully"), `standalone cli should create the project (got: ${stdout})`);
+  assert.ok(fs.existsSync(tmpDb), "standalone cli must persist the database file");
+  console.log("7. e2e cli: no bridge -> direct path persists locally ok");
 }
 
 console.log("\n=== ALL PROXY MODE TESTS PASSED ===");
