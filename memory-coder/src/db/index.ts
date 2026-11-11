@@ -751,7 +751,7 @@ export function addLog(data: {
   database.run(
     `INSERT INTO activity_logs (id, action, entity_type, entity_id, project_id, summary, source, metadata, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [log.id, log.action, log.entity_type, log.entity_id, log.project_id, log.summary, JSON.stringify(log.metadata), log.created_at]
+    [log.id, log.action, log.entity_type, log.entity_id, log.project_id, log.summary, log.source, JSON.stringify(log.metadata), log.created_at]
   );
   scheduleSave();
   return log;
